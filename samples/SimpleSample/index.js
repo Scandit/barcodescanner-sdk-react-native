@@ -43,7 +43,6 @@ export default class SimpleSample extends Component {
   }
 
   componentDidMount() {
-    this.pickerViewHandle = findNodeHandle(this.scanner);
     this.scanner.startScanning();
   }
 

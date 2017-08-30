@@ -38,6 +38,7 @@ npm-debug.log
 yarn-error.log
 
 # BUCK
+#
 buck-out/
 \.buckd/
 *.keystore
@@ -53,5 +54,10 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 
-#MISC
+# MISC
+#
 *-lock*
+
+# DOCS
+#
+public-docs

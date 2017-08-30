@@ -9,11 +9,11 @@ export class ScanSession {
 		this.rejectedCodes = [];
 	}
 
-	pauseScan() {
+	pauseScanning() {
 		this.shouldPause = true;
 	}
 
-	stopScan() {
+	stopScanning() {
 		this.shouldStop = true;
 	}
 

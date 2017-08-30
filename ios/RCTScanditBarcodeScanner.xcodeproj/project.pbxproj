@@ -241,10 +241,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = CCJEHQ4M9R;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../ScanditSDK",
-					"$(PROJECT_DIR)/../../../ios/ScanditSDK",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../../ios/ScanditSDK";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -255,10 +252,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = CCJEHQ4M9R;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../ScanditSDK",
-					"$(PROJECT_DIR)/../../../ios/ScanditSDK",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../../ios/ScanditSDK";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
