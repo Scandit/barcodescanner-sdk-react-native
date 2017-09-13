@@ -758,18 +758,32 @@ public class Scandit {
 		 */
 		public enum Extension {
 			/**
-			 * Full-ASCII Code39 extension.
+			 * Interprets the Code39 code data using two symbols per output character to encode all ASCII characters.
 			 */
 			FULL_ASCII,
 			/**
-			 * Remove leading zero of UPCA codes. When enabled, the leading zero of UPCA codes is
-			 * removed. When false (the default), the leading zero is returned as part of the
-			 * barcode data string.
+			 * Removes the leading zero digit from the result.
 			 */
 			REMOVE_LEADING_ZERO,
+			/**
+			 * Enables scanning codes that have quiet zones (white area before and after the code) that are significantly 
+			 * smaller than allowed by the symbology specification. Use this extension if you are having difficulties to 
+			 * scan codes due to quiet zone violations. However, enabling it may come at the cost of more false positives 
+			 * under certain circumstances.
+			 */
 			QUIET_ZONE_CHECK,
+			/**
+			 * Transforms the UPCE result into its UPCA representation.
+			 */
 	    RETURN_AS_UPCA,
+			/**
+			 * Removes the leading zero digit from the result if the UPCA representation extension 'return_as_upca' is enabled.
+			 */
 	    REMOVE_LEADING_UPCA_ZERO,
+			/**
+			 * Removes the leading FNC1 character that indicates a GS1 code. To determine whether a certain code is a GS1 code, 
+			 * use \ref sc_barcode_is_gs1_data_carrier.
+			 */
 	    STRIP_LEADING_FNC
 		}
 
