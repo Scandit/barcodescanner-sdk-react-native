@@ -84,9 +84,9 @@ public class Scandit {
     		 * @brief PDF417 barcode symbology. Only available in the Professional and Enterprise Packages.
     		 */
 			PDF417,
-				/**
-				*	@brief MicroPDF417 barcode symbology. Only available in the Professional and Enterprise Packages.
-				*/
+    		/**
+    		 *	@brief MicroPDF417 barcode symbology. Only available in the Professional and Enterprise Packages.
+    		 */
 			MICRO_PDF417,
     		/**
     		 * @brief MSI Plessey 1D barcode symbology. Only available in the Professional and Enterprise Packages.
@@ -112,9 +112,9 @@ public class Scandit {
     		 * @brief Aztec 2D barcode symbology. Only available in the Professional and Enterprise Packages.
     		 */
 			AZTEC,
-				/**
-				* @brief DotCode 2D barcode symbology. Only available in the Professional and Enterprise Packages.
-				*/
+    		/**
+    		 * @brief DotCode 2D barcode symbology. Only available in the Professional and Enterprise Packages.
+    		 */
 			DOTCODE,
     		/**
     		 * @brief Maxicode 2D barcode symbology. Only available in the Professional and Enterprise Packages.
@@ -140,13 +140,13 @@ public class Scandit {
     		 * Only available in the Professional and Enterprise Packages.
     		 */
 			TWO_DIGIT_ADD_ON,
-				/**
-				 * @brief Royal Dutch TPG Post KIX. Only available in Professional and Enterprise Packages.
-				 */
+    		/**
+    		 * @brief Royal Dutch TPG Post KIX. Only available in Professional and Enterprise Packages.
+    		 */
 			KIX,
-				/**
-				 * @brief Royal Mail 4 State Customer Code (RM4SCC). Only available in Professional and Enterprise Packages.
-				 */
+    		/**
+    		 * @brief Royal Mail 4 State Customer Code (RM4SCC). Only available in Professional and Enterprise Packages.
+    		 */
 			RM4SCC
 		}
 
@@ -771,7 +771,7 @@ public class Scandit {
 			 * scan codes due to quiet zone violations. However, enabling it may come at the cost of more false positives 
 			 * under certain circumstances.
 			 */
-			QUIET_ZONE_CHECK,
+			RELAXED_SHARP_QUIET_ZONE_CHECK,
 			/**
 			 * Transforms the UPCE result into its UPCA representation.
 			 */
