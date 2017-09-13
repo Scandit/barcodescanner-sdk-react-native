@@ -112,6 +112,10 @@ public class Scandit {
     		 * @brief Aztec 2D barcode symbology. Only available in the Professional and Enterprise Packages.
     		 */
 			AZTEC,
+				/**
+				* @brief DotCode 2D barcode symbology. Only available in the Professional and Enterprise Packages.
+				*/
+			DOTCODE,
     		/**
     		 * @brief Maxicode 2D barcode symbology. Only available in the Professional and Enterprise Packages.
     		 */
@@ -754,10 +758,6 @@ public class Scandit {
 		 */
 		public enum Extension {
 			/**
-			 * Enable decoder optimizations for small data-matrix codes.
-			 */
-			TINY,
-			/**
 			 * Full-ASCII Code39 extension.
 			 */
 			FULL_ASCII,
@@ -766,7 +766,11 @@ public class Scandit {
 			 * removed. When false (the default), the leading zero is returned as part of the
 			 * barcode data string.
 			 */
-			REMOVE_LEADING_ZERO
+			REMOVE_LEADING_ZERO,
+			QUIET_ZONE_CHECK,
+	    RETURN_AS_UPCA,
+	    REMOVE_LEADING_UPCA_ZERO,
+	    STRIP_LEADING_FNC
 		}
 
 

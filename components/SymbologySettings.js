@@ -18,7 +18,10 @@ SymbologySettings.Checksum = {
 }
 
 SymbologySettings.Extension = {
-    TINY: "tiny",
     FULL_ASCII: "full_ascii",
-    REMOVE_LEADING_ZERO: "remove_leading_zero"
+    REMOVE_LEADING_ZERO: "remove_leading_zero",
+    QUIET_ZONE_CHECK: "relaxed_sharp_quiet_zone_check",
+    RETURN_AS_UPCA: "return_as_upca",
+    REMOVE_LEADING_UPCA_ZERO: "remove_leading_upca_zero",
+    STRIP_LEADING_FNC: "strip_leading_fnc1"
 }
