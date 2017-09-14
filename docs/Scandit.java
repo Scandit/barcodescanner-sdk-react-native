@@ -781,10 +781,9 @@ public class Scandit {
 			 */
 	    REMOVE_LEADING_UPCA_ZERO,
 			/**
-			 * Removes the leading FNC1 character that indicates a GS1 code. To determine whether a certain code is a GS1 code, 
-			 * use \ref sc_barcode_is_gs1_data_carrier.
+			 * Removes the leading FNC1 character that indicates a GS1 code.
 			 */
-	    STRIP_LEADING_FNC
+	    STRIP_LEADING_FNC1
 		}
 
 
