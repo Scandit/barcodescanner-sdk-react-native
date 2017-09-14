@@ -15,11 +15,14 @@ echo "new SDK version: ${VERSION}"
 
 update_versions() {
   the_file=docs/doxygen.conf
-  sed -i '' "s/PROJECT_NUMBER = \(.*\)/PROJECT_NUMBER = ${VERSION}/" $the_file
+  sed -i.bak "s/PROJECT_NUMBER = \(.*\)/PROJECT_NUMBER = ${VERSION}/" $the_file
+  rm ${the_file}.bak
   the_file=package.json
-  sed -i '' "s_\"version\":\(.*\)_\"version\": \"${VERSION}\",_" $the_file
+  sed -i.bak "s_\"version\":\(.*\)_\"version\": \"${VERSION}\",_" $the_file
+  rm ${the_file}.bak
   the_file=samples/SimpleSample/package.json
-  sed -i '' "s_\"version\":\(.*\)_\"version\": \"${VERSION}\",_" $the_file
+  sed -i.bak "s_\"version\":\(.*\)_\"version\": \"${VERSION}\",_" $the_file
+  rm ${the_file}.bak
 }
 
 update_versions
