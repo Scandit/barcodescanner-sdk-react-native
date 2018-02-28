@@ -10,7 +10,7 @@
 		"react": "16.2.0",
 		"react-native": "0.52",
 		"react-native-iphone-x-helper": "^1.0.2",
-		"react-native-scandit": "git+https://github.com/Scandit/barcodescanner-sdk-react-native.git",
+		"react-native-scandit": "file:../../",
 		"react-native-simple-events": "1.0.1",
 		"react-navigation": "github:react-community/react-navigation#master",
 		"react-navigation-is-focused-hoc": "^1.1.1"
