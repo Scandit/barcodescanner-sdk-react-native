@@ -262,8 +262,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
 
     private fun setTorchButtonMarginsSize(args: ReadableArray?) {
         picker?.overlayView?.setTorchButtonMarginsAndSize(
-                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3)
-                ?: 0
+                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3) ?: 0
         )
     }
 
@@ -281,8 +280,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
 
     private fun setCameraSwitchMarginsSize(args: ReadableArray?) {
         picker?.overlayView?.setCameraSwitchButtonMarginsAndSize(
-                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3)
-                ?: 0
+                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3) ?: 0
         )
     }
 
