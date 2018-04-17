@@ -161,8 +161,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         val event = Arguments.createMap()
         val context = picker?.context as ReactContext?
         event.putString("text", text?.text)
-        context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id
-                ?: 0, "onTextRecognized", event)
+        context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
+                "onTextRecognized", event)
         return TextRecognitionListener.PICKER_STATE_ACTIVE
     }
 
@@ -240,8 +240,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         isMatrixScanEnabled = settings.isMatrixScanEnabled
         picker?.applyScanSettings(settings, {
             val context = picker?.context as ReactContext?
-            context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id
-                    ?: 0, "onSettingsApplied", Arguments.createMap())
+            context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
+                    "onSettingsApplied", Arguments.createMap())
         })
     }
 
