@@ -1,6 +1,7 @@
 package com.scandit.reactnative
 
-import android.graphics.Color
+import android.graphics.*
+import android.util.Base64
 import com.facebook.react.bridge.*
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.uimanager.SimpleViewManager
@@ -11,11 +12,11 @@ import com.scandit.barcodepicker.*
 import com.scandit.barcodepicker.BarcodePicker
 import com.scandit.barcodepicker.ocr.RecognizedText
 import com.scandit.barcodepicker.ocr.TextRecognitionListener
-import java.util.concurrent.CountDownLatch
 import com.scandit.recognition.TrackedBarcode
-import java.util.HashSet
+import java.io.ByteArrayOutputStream
 import java.util.ArrayList
-
+import java.util.concurrent.CountDownLatch
+import java.util.HashSet
 
 
 class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRecognitionListener, ProcessFrameListener {
@@ -26,6 +27,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
     private var lastFrameRecognizedIds = HashSet<Long>()
     private var isMatrixScanEnabled = false
     private var nextPickerState = NextPickerState.CONTINUE
+    private var shouldPassBarcodeFrame = false
     private val codesToReject = ArrayList<Int>()
     private val idsToReject = ArrayList<String>()
 
@@ -92,6 +94,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         return MapBuilder.of(
                 "onScan", MapBuilder.of("registrationName", "onScan"),
+                "onBarcodeFrameAvailable", MapBuilder.of("registrationName", "onBarcodeFrameAvailable"),
                 "onRecognizeNewCodes", MapBuilder.of("registrationName", "onRecognizeNewCodes"),
                 "onSettingsApplied", MapBuilder.of("registrationName", "onSettingsApplied"),
                 "onTextRecognized", MapBuilder.of("registrationName", "onTextRecognized")
@@ -99,10 +102,18 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
     }
 
     override fun didProcess(buffer: ByteArray?, width: Int, height: Int, scanSession: ScanSession?) {
-        if (scanSession ==  null || scanSession.trackedCodes.isEmpty()) {
+        if (scanSession == null || scanSession.trackedCodes.isEmpty()) {
             return
         }
+
         val context = picker?.context as ReactContext?
+
+        if (shouldPassBarcodeFrame && scanSession.newlyRecognizedCodes.size > 0) {
+            val event = Arguments.createMap()
+            event.put("base64FrameString", base64StringFromByteArray(buffer, width, height))
+            context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
+                    "onBarcodeFrameAvailable", event)
+        }
 
         val trackedCodes = scanSession.trackedCodes
         val newlyTrackedCodes = ArrayList<TrackedBarcode>()
@@ -132,7 +143,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
     }
 
     override fun didScan(scanSession: ScanSession?) {
-        if (isMatrixScanEnabled || scanSession ==  null) {
+        if (isMatrixScanEnabled || scanSession == null) {
             return
         }
         val context = picker?.context as ReactContext?
@@ -150,7 +161,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         val event = Arguments.createMap()
         val context = picker?.context as ReactContext?
         event.putString("text", text?.text)
-        context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0, "onTextRecognized", event)
+        context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id
+                ?: 0, "onTextRecognized", event)
         return TextRecognitionListener.PICKER_STATE_ACTIVE
     }
 
@@ -159,6 +171,31 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         val settings = settingsFromMap(settingsJson)
         isMatrixScanEnabled = settings.isMatrixScanEnabled
         view.applyScanSettings(settings)
+    }
+
+    @ReactProp(name = "shouldPassBarcodeFrame")
+    fun setPropScanSettings(view: BarcodePicker, shouldPassBarcodeFrame: Boolean) {
+        this.shouldPassBarcodeFrame = shouldPassBarcodeFrame
+    }
+
+    private fun base64StringFromByteArray(buffer: ByteArray?, width: Int, height: Int): String {
+        if (buffer == null) {
+            return ""
+        }
+
+        val jpegBitmap = getRotatedBitmapFromYuv(buffer, width, height)
+        val outStream = ByteArrayOutputStream()
+        jpegBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)
+
+        return Base64.encodeToString(outStream.toByteArray(), Base64.DEFAULT)
+    }
+
+    private fun getRotatedBitmapFromYuv(bytes: ByteArray, width: Int, height: Int): Bitmap {
+        val yuvImage = YuvImage(bytes, ImageFormat.NV21, width, height, null)
+        val outputStream = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, outputStream)
+        val jpegByteArray = outputStream.toByteArray()
+        return BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.size)
     }
 
     private fun handleNextPickerState(scanSession: ScanSession) {
@@ -203,7 +240,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         isMatrixScanEnabled = settings.isMatrixScanEnabled
         picker?.applyScanSettings(settings, {
             val context = picker?.context as ReactContext?
-            context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0, "onSettingsApplied", Arguments.createMap())
+            context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id
+                    ?: 0, "onSettingsApplied", Arguments.createMap())
         })
     }
 
@@ -224,7 +262,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
 
     private fun setTorchButtonMarginsSize(args: ReadableArray?) {
         picker?.overlayView?.setTorchButtonMarginsAndSize(
-                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3) ?: 0
+                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3)
+                ?: 0
         )
     }
 
@@ -242,7 +281,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
 
     private fun setCameraSwitchMarginsSize(args: ReadableArray?) {
         picker?.overlayView?.setCameraSwitchButtonMarginsAndSize(
-                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3) ?: 0
+                args?.getInt(0) ?: 0, args?.getInt(1) ?: 0, args?.getInt(2) ?: 0, args?.getInt(3)
+                ?: 0
         )
     }
 
