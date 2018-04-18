@@ -102,7 +102,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
     }
 
     override fun didProcess(buffer: ByteArray?, width: Int, height: Int, scanSession: ScanSession?) {
-        if (scanSession == null || scanSession.trackedCodes.isEmpty()) {
+        if (scanSession == null) {
             return
         }
 
@@ -110,9 +110,13 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
 
         if (shouldPassBarcodeFrame && scanSession.newlyRecognizedCodes.size > 0) {
             val event = Arguments.createMap()
-            event.put("base64FrameString", base64StringFromByteArray(buffer, width, height))
+            event.putString("base64FrameString", base64StringFromByteArray(buffer, width, height))
             context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
                     "onBarcodeFrameAvailable", event)
+        }
+
+        if (scanSession.trackedCodes.isEmpty()) {
+            return
         }
 
         val trackedCodes = scanSession.trackedCodes
@@ -183,14 +187,14 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
             return ""
         }
 
-        val jpegBitmap = getRotatedBitmapFromYuv(buffer, width, height)
+        val jpegBitmap = getBitmapFromYuv(buffer, width, height)
         val outStream = ByteArrayOutputStream()
         jpegBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)
 
         return Base64.encodeToString(outStream.toByteArray(), Base64.DEFAULT)
     }
 
-    private fun getRotatedBitmapFromYuv(bytes: ByteArray, width: Int, height: Int): Bitmap {
+    private fun getBitmapFromYuv(bytes: ByteArray, width: Int, height: Int): Bitmap {
         val yuvImage = YuvImage(bytes, ImageFormat.NV21, width, height, null)
         val outputStream = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, outputStream)
