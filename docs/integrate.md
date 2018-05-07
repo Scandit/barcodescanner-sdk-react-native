@@ -29,8 +29,8 @@ Use the React Native CLI to add the plugin to your already existing project.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.java}
     cd <directory of your project>
-    npm install react-native-scandit@https://github.com/Scandit/barcodescanner-sdk-react-native.git --save
-    react-native link react-native-scandit
+    npm install scandit-react-native@https://github.com/Scandit/barcodescanner-sdk-react-native.git --save
+    react-native link scandit-react-native
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Add Android dependencies
@@ -68,6 +68,13 @@ Copy it to <directory_of_your_project>/android/libs, then in your main build.gra
 The scanning process is managed by the {@link Scandit.BarcodePicker BarcodePicker}. Before instantiating the picker, you will have to set your Scandit Barcode Scanner license key. The key is available from your Scandit Barcode Scanner SDK account at http://account.scandit.com in the License Keys section. The barcode scanning is configured through an instance of scan settings that you pass to the BarcodePicker as props.
 
 ~~~~~~~~~~~~~~~~{.java}
+import {
+  BarcodePicker,
+  ScanditModule,
+  Barcode,
+  ScanSettings
+} from 'scandit-react-native';
+
 
 // Set your license key.
 ScanditModule.setAppKey('-- ENTER YOUR SCANDIT LICENSE KEY HERE --');
