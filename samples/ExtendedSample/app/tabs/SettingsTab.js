@@ -325,6 +325,14 @@ export default class SettingsTab extends Component {
                 this.setState(this.state);
               }}
             />
+            <LabeledSwitch
+              label='Code 32'
+              value={this.state.scanSettings.symbologies[Barcode.Symbology.CODE32].enabled}
+              listener={(value) => {
+                this.state.scanSettings.symbologies[Barcode.Symbology.CODE32].enabled = value;
+                this.setState(this.state);
+              }}
+            />
             <Text style={{fontWeight: 'bold',
               margin: 10}}>
               Scanning Area

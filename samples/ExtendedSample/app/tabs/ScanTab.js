@@ -114,6 +114,7 @@ export default class ScanScreen extends Component {
     this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.KIX, false);
     this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.DOTCODE, false);
     this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.MICROQR, false);
+    this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.CODE32, false);
     this.scanSpecs.scanSettings.symbologies[Barcode.Symbology.QR].colorInvertedEnabled = false;
     this.scanSpecs.scanSettings.symbologies[Barcode.Symbology.DATA_MATRIX].colorInvertedEnabled = false;
     this.scanSpecs.scanSettings.activeScanningAreaCenterY = 0.5;

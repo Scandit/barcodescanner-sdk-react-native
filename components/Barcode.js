@@ -39,5 +39,6 @@ Barcode.Symbology = {
   KIX: "kix",
   RM4SCC: "rm4scc",
   DOTCODE: "dotcode",
-  MICROQR: "microQR"
+  MICROQR: "microQR",
+  CODE32: "code32"
 }

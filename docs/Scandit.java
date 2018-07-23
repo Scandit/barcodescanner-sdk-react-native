@@ -225,7 +225,12 @@ public class Scandit {
       /**
       * @brief Royal Mail 4 State Customer Code (RM4SCC). Only available in Professional and Enterprise Packages.
       */
-      RM4SCC
+      RM4SCC,
+
+      /**
+       * @brief Code 32 barcode symbology. Only available in Professional and Enterprise Packages.
+       */
+      CODE32
     }
 
     /**
