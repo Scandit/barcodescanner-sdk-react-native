@@ -23,6 +23,7 @@ import {
   ScanditModule,
   ScanSession,
   Barcode,
+  Rect,
   SymbologySettings,
   ScanSettings,
   ScanOverlay
@@ -66,6 +67,8 @@ export default class App extends Component<Props> {
     this.settings.setSymbologyEnabled(Barcode.Symbology.UPCA, true);
     this.settings.setSymbologyEnabled(Barcode.Symbology.UPCE, true);
     this.settings.setSymbologyEnabled(Barcode.Symbology.CODE128, true);
+    this.settings.activeScanningAreaPortrait = new Rect(0, 0.48, 1, 0.04);
+    this.settings.activeScanningAreaLandscape = new Rect(0, 0.48, 1, 0.04);
     this.settings.codeDuplicateFilter = 1000;
   }
 
