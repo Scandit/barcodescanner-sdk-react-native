@@ -86,7 +86,7 @@ export default class App extends Component<Props> {
 
   onScan(session) {
     this.state.codes.push({
-      key: session.newlyRecognizedCodes[0].data
+      code: session.newlyRecognizedCodes[0].data
     });
     this.setState(this.state);
     this.setTimer();
@@ -150,7 +150,8 @@ export default class App extends Component<Props> {
         <View style={{ flex: 70 }}>
           <FlatList style={{ flex: 1 }}
             data={ this.state.codes }
-            renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}/>
+            renderItem={({item}) => <Text style={styles.item}>{item.code}</Text>}
+            keyExtractor={(item, index) => index.toString()}/>
         </View>
         <View style={{ flex: 10, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center' }}>
           <Button
