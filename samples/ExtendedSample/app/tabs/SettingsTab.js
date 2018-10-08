@@ -600,6 +600,34 @@ export default class SettingsTab extends Component {
                 this.state.overlaySettings.cameraSwitchOffset.top = value;
                 this.setState(this.state);
             }}/>
+            <LabeledSwitch
+              label='Enable Lensposition'
+              value={this.state.lenspositionEnabled}
+              listener={(value) => {
+                if (value) {
+                  this.state.scanSettings.lensPosition = this.state.lensPosition;
+                  this.state.lensPosition = this.state.scanSettings.lensPosition;
+                } else {
+                  delete this.state.scanSettings.lensPosition;
+                }
+                this.state.lenspositionEnabled = value;
+                this.setState(this.state);
+              }}
+              />
+              <LabeledSlider
+                label='Lens position'
+                disabled={!this.state.lenspositionEnabled}
+                initialValue={ this.state.lensPosition }
+                  step={ 1.0 }
+                  decimals={ 0 }
+                  minValue={ 0 }
+                  maxValue={ 100 }
+                  listener={(value) => {
+                    this.state.scanSettings.lensPosition = value;
+                    this.state.lensPosition = value;
+                    this.setState(this.state);
+                  }}
+                />
           </ScrollView>
         </View>
     );
