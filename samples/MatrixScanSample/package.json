@@ -10,12 +10,13 @@
   "dependencies": {
     "react": "16.5.0",
     "react-native": "0.57.1",
+    "prop-types": "15.6.2",
     "scandit-react-native": "file:../../"
   },
   "devDependencies": {
     "metro": "^0.45.6",
     "metro-core": "^0.45.6",
     "metro-react-native-babel-preset": "^0.45.6",
-    "react-test-renderer": "16.2.0"
+    "react-test-renderer": "16.5.0"
   }
 }
