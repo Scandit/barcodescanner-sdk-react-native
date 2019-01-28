@@ -21,7 +21,7 @@ The following sets the portrait's scanning area to 90% of the camera preview wid
 ~~~~~~~~~~~~~~~~{.java}
 
 this.settings = new ScanSettings();
-this.settings.activeScanningAreaPortrait = new Scandit.Rect(0.05, 0.45, 0.9, 0.1);
+this.settings.activeScanningAreaPortrait = new Rect(0.05, 0.45, 0.9, 0.1);
 
 ~~~~~~~~~~~~~~~~
 
@@ -41,7 +41,7 @@ Alternatively, you can use the laser GUI style. It will display a laser line ins
 
 ~~~~~~~~~~~~~~~~{.java}
 
-picker.setGuiStyle(Scandit.ScanOverlay.GuiStyle.LASER);
+picker.setGuiStyle(ScanOverlay.GuiStyle.LASER);
 
 ~~~~~~~~~~~~~~~~
 
