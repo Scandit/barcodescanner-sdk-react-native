@@ -178,3 +178,8 @@ export class BarcodePicker extends React.Component {
     }
 
 }
+
+BarcodePicker.Warning {
+    TOO_MUCH_GLARE_WARNING: 3,
+    NOT_ENOUGH_CONTRAST_WARNING: 4
+}
