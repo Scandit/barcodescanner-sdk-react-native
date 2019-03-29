@@ -19,7 +19,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.HashSet
 
 
-class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRecognitionListener, ProcessFrameListener {
+class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRecognitionListener, ProcessFrameListener, WarningsListener {
 
     private var picker: BarcodePicker? = null
     private var didScanLatch: CountDownLatch = CountDownLatch(1)
@@ -88,6 +88,7 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         picker?.setOnScanListener(this)
         picker?.setTextRecognitionListener(this)
         picker?.setProcessFrameListener(this)
+        picker?.addWarningsListener(this)
         return picker as BarcodePicker
     }
 
@@ -97,7 +98,8 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
                 "onBarcodeFrameAvailable", MapBuilder.of("registrationName", "onBarcodeFrameAvailable"),
                 "onRecognizeNewCodes", MapBuilder.of("registrationName", "onRecognizeNewCodes"),
                 "onSettingsApplied", MapBuilder.of("registrationName", "onSettingsApplied"),
-                "onTextRecognized", MapBuilder.of("registrationName", "onTextRecognized")
+                "onTextRecognized", MapBuilder.of("registrationName", "onTextRecognized"),
+                "onWarnings", MapBuilder.of("registrationName", "onWarnings")
         )
     }
 
@@ -168,6 +170,15 @@ class BarcodePicker : SimpleViewManager<BarcodePicker>(), OnScanListener, TextRe
         context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
                 "onTextRecognized", event)
         return TextRecognitionListener.PICKER_STATE_ACTIVE
+    }
+
+    override fun onWarnings(warnings: Set<Int>) {
+        if (warnings.isEmpty()) {
+            return
+        }
+        val context = picker?.context as ReactContext?
+        context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
+                "onWarnings", warningsToMap(warnings))
     }
 
     @ReactProp(name = "scanSettings")

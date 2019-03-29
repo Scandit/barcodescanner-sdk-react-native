@@ -48,6 +48,16 @@ fun newlyTrackedCodesToMap(codes: List<TrackedBarcode>): WritableMap {
     return event
 }
 
+fun warningsToMap(warnings: Set<Int>): WritableMap {
+    val event = Arguments.createMap()
+
+    val warningsArray = Arguments.createArray()
+    warnings.forEach { warningsArray.pushInt(it) }
+    event.putArray("warnings", warningsArray)
+
+    return event
+}
+
 fun barcodeToMap(barcode: Barcode?, index: Int = -1): WritableMap {
     val map = barcodeToMap(barcode)
 

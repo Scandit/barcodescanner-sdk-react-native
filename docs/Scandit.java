@@ -71,7 +71,7 @@ public class Scandit {
     /**
     * @brief An enumeration of all supported barcode symbologies
     */
-    public enum Symbology  {
+    public enum Symbology {
 
       /**
       * @brief Sentinel value to represent an unknown symbology
