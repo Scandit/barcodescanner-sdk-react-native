@@ -318,6 +318,14 @@ public class Scandit {
     public function onTextRecognized;
 
     /**
+     *  @brief Prop used to set the a warnings callback.
+     *
+     *  The onWarnings method will be executed after every time a warning is raised
+     *  by the frame processing engine.
+     */
+    public function onWarnings;
+
+    /**
     * @brief Reconfigure the barcode picker with new settings
     *
     * The settings are applied asynchronously. Once they have been applied, all new frames
@@ -529,6 +537,22 @@ public class Scandit {
     */
     public void setOverlayProperty(String key, Object value);
     ///@}
+
+    /**
+     * @brief Warnings that can be raised by the frame processing engine.
+     */
+    public enum Warning {
+
+      /**
+       * @brief Too much glare warning.
+       */
+      TOO_MUCH_GLARE_WARNING,
+      /**
+       * @brief Not enough contrast warning.
+       */
+      NOT_ENOUGH_CONTRAST_WARNING
+    }
+
   }
 
   /**
