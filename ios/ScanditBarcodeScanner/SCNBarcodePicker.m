@@ -162,7 +162,7 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
     return [@"data:image/png;base64," stringByAppendingString:base64String];
 }
 
-@interface SCNBarcodePicker () <SBSScanDelegate, SBSProcessFrameDelegate>
+@interface SCNBarcodePicker () <SBSScanDelegate, SBSProcessFrameDelegate, SBSWarningsObserver>
 
 @property (nonatomic) BOOL shouldStop;
 @property (nonatomic) BOOL shouldPause;
@@ -187,11 +187,16 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
         _picker = [[SBSBarcodePicker alloc] initWithSettings:scanSettings];
         _picker.scanDelegate = self;
         _picker.processFrameDelegate = self;
+        [_picker addWarningsObserver:self];
         _didScanSemaphore = dispatch_semaphore_create(0);
         _didProcessFrameSemaphore = dispatch_semaphore_create(0);
         [self addSubview:_picker.view];
     }
     return self;
+}
+
+- (void)dealloc {
+    [_picker removeWarningsObserver:self];
 }
 
 - (void)layoutSubviews {
@@ -318,6 +323,22 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
             self.idsToVisuallyReject = nil;
         }
     }
+}
+
+#pragma mark - SBSWarningsObserver
+
+- (void)barcodePicker:(SBSBarcodePicker *)barcodePicker
+   didProduceWarnings:(SBSWarning)warnings {
+    NSMutableArray<NSNumber *> *result = [NSMutableArray arrayWithCapacity:2];
+    if (warnings & SBSWarningTooMuchGlare) {
+        // Add 3 which represents `TOO_MUCH_GLARE_WARNING: 3` (check barcodePicker.js)
+        [result addObject:@3];
+    }
+    if (warnings & SBSWarningNotEnoughContrast) {
+        // Add 4 which represents `NOT_ENOUGH_CONTRAST_WARNING: 4` (check barcodePicker.js)
+        [result addObject:@4];
+    }
+    self.onWarnings(@{@"warnings": result});
 }
 
 @end
