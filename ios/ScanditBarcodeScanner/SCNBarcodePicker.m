@@ -12,6 +12,13 @@
 
 @import ScanditBarcodeScanner;
 
+typedef NS_ENUM(NSUInteger, SCNPropertyChanged) {
+    SCNPropertyChangedTorch = 0,
+    SCNPropertyChangedSwitchCamera = 1,
+    SCNPropertyChangedRecognitionMode = 2,
+    SCNPropertyChangedRelativeZoom = 3
+};
+
 static inline NSDictionary<NSString *, id> *dictionaryFromQuadrilateral(SBSQuadrilateral quadrilateral) {
     return @{
              @"topLeft": @[@(quadrilateral.topLeft.x), @(quadrilateral.topLeft.y)],
@@ -347,9 +354,30 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 - (void)barcodePicker:(SBSBarcodePicker *)barcodePicker
              property:(NSString *)property
        changedToValue:(NSObject *)value {
-    if ([value isKindOfClass:[NSNumber class]]) {
-        NSString *newState = ((NSNumber *)value).stringValue;
-        NSDictionary *result = @{@"name": property, @"newState": newState};
+    if (![value isKindOfClass:[NSNumber class]]) {
+        return;
+    }
+    NSNumber *number = (NSNumber *)value;
+    if ([property isEqualToString:@"torchOn"]) {
+        if (number.unsignedIntegerValue == 1) { // torch on
+            number = @(2);
+        } else if (number.unsignedIntegerValue == 2) { // torch off
+            number = @(1);
+        }
+        NSDictionary *result = @{@"name": @(SCNPropertyChangedTorch), @"newState": number};
+        self.onPropertyChanged(result);
+    } else if ([property isEqualToString:@"relativeZoom"]) {
+        number = @(number.floatValue * 1000);
+        NSDictionary *result = @{@"name": @(SCNPropertyChangedRelativeZoom), @"newState": number};
+        self.onPropertyChanged(result);
+    } else if ([property isEqualToString:@"switchCamera"]) {
+        NSDictionary *result = @{@"name": @(SCNPropertyChangedSwitchCamera), @"newState": number};
+        self.onPropertyChanged(result);
+    } else if ([property isEqualToString:@"recognitionMode"]) {
+        if (number.unsignedIntegerValue == 4) { // text and barcodes
+            number = @(3);
+        }
+        NSDictionary *result = @{@"name": @(SCNPropertyChangedRecognitionMode), @"newState": number};
         self.onPropertyChanged(result);
     }
 }
