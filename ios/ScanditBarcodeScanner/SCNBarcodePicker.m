@@ -12,6 +12,8 @@
 
 @import ScanditBarcodeScanner;
 
+typedef SBSQuadrilateral (^ConversionBlock)(SBSQuadrilateral);
+
 static inline NSDictionary<NSString *, id> *dictionaryFromQuadrilateral(SBSQuadrilateral quadrilateral) {
     return @{
              @"topLeft": @[@(quadrilateral.topLeft.x), @(quadrilateral.topLeft.y)],
@@ -74,7 +76,7 @@ static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
 }
 
 static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes,
-                                                         SBSBarcodePicker *picker) {
+                                                         ConversionBlock convert) {
     NSMutableArray *newlyTrackedCodes = [NSMutableArray arrayWithCapacity:trackedCodes.count];
     for (NSNumber *identifier in trackedCodes) {
         SBSTrackedCode *trackedCode = trackedCodes[identifier];
@@ -84,8 +86,8 @@ static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *
         codeDictionary[@"deltaTimeForPrediction"] = [NSNumber numberWithDouble:(trackedCode.deltaTimeForPrediction)];
         codeDictionary[@"shouldAnimateFromPreviousToNextState"] = [NSNumber numberWithBool:(trackedCode.shouldAnimateFromPreviousToNextState)];
 
-        SBSQuadrilateral convertedRect = convertQuadrilateral(trackedCode.predictedLocation, picker);
-        codeDictionary[@"convertedPredictedLocation"] = dictionaryFromQuadrilateral(convertedRect);
+        SBSQuadrilateral convertedPredictedLocation = convert(trackedCode.predictedLocation);
+        codeDictionary[@"convertedPredictedLocation"] = dictionaryFromQuadrilateral(convertedPredictedLocation);
 
         [newlyTrackedCodes addObject:codeDictionary];
     }
@@ -94,10 +96,10 @@ static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *
 
 static inline NSDictionary *dictionaryForMatrixScanSession(NSDictionary<NSNumber *,SBSTrackedCode *> *allTrackedCodes,
                                                            NSDictionary<NSNumber *,SBSTrackedCode *> *newlyTrackedCodes,
-                                                           SBSBarcodePicker *picker) {
+                                                           ConversionBlock convert) {
     return @{
-             @"allTrackedCodes": dictionaryFromTrackedCodes(allTrackedCodes, picker),
-             @"newlyTrackedCodes": dictionaryFromTrackedCodes(newlyTrackedCodes, picker),
+             @"allTrackedCodes": dictionaryFromTrackedCodes(allTrackedCodes, convert),
+             @"newlyTrackedCodes": dictionaryFromTrackedCodes(newlyTrackedCodes, convert),
              };
 }
 
@@ -349,9 +351,12 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 
     self.lastFrameRecognizedIds = recognizedCodeIds;
 
+    SBSQuadrilateral (^convert)(SBSQuadrilateral) = ^SBSQuadrilateral(SBSQuadrilateral rect) {
+        return convertQuadrilateral(rect, barcodePicker);
+    };
     NSDictionary *matrixScanSessionDictionary = dictionaryForMatrixScanSession(session.trackedCodes,
                                                                                newlyTrackedCodes,
-                                                                               barcodePicker);
+                                                                               convert);
 
     if (self.matrixScanEnabled && self.onChangeTrackedCodes) {
         self.onChangeTrackedCodes(matrixScanSessionDictionary);
