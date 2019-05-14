@@ -1,6 +1,4 @@
-import {
-  UIManager
-} from 'react-native';
+import { UIManager } from 'react-native';
 
 export class CommandDispatcher {
 
@@ -45,6 +43,13 @@ export class CommandDispatcher {
     UIManager.dispatchViewManagerCommand(
       this.pickerViewHandle,
       UIManager.getViewManagerConfig('BarcodePicker').Commands.finishOnRecognizeNewCodes,
+      session);
+  }
+
+  finishOnChangeTrackedCodes(session) {
+    UIManager.dispatchViewManagerCommand(
+      this.pickerViewHandle,
+      UIManager.getViewManagerConfig('BarcodePicker').Commands.finishOnChangeTrackedCodes,
       session);
   }
 

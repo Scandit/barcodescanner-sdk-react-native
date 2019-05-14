@@ -1,7 +1,8 @@
 export class MatrixScanSession {
 
-	constructor(newlyTrackedCodes) {
+	constructor(newlyTrackedCodes, allTrackedCodes) {
 		this.newlyTrackedCodes = newlyTrackedCodes;
+		this.allTrackedCodes = allTrackedCodes;
 		this.shouldPause = false;
 		this.shouldStop = false;
 		this.rejectedCodes = [];

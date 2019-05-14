@@ -30,16 +30,26 @@ static NSDictionary<NSString *, id> *dictionaryFromCode(SBSCode *code, NSNumber 
         }
     }
 
-    return @{
-             @"id": identifier ?: @(-1),
-             @"rawData": bytesArray,
-             @"data": code.data ?: @"",
-             @"symbology": code.symbologyName,
-             @"compositeFlag": @(code.compositeFlag),
-             @"isGs1DataCarrier": [NSNumber numberWithBool:code.isGs1DataCarrier],
-             @"isRecognized": [NSNumber numberWithBool:code.isRecognized],
-             @"location": dictionaryFromQuadrilateral(code.location),
-             };
+    NSMutableDictionary<NSString *, id> * codeDict;
+    codeDict = [[NSMutableDictionary alloc]
+                initWithDictionary:@{
+                                     @"id": identifier ?: @(-1),
+                                     @"rawData": bytesArray,
+                                     @"data": code.data ?: @"",
+                                     @"symbology": code.symbologyName,
+                                     @"compositeFlag": @(code.compositeFlag),
+                                     @"isGs1DataCarrier": [NSNumber numberWithBool:code.isGs1DataCarrier],
+                                     @"isRecognized": [NSNumber numberWithBool:code.isRecognized],
+                                     @"location": dictionaryFromQuadrilateral(code.location),
+                                     }];
+
+    if ([code isKindOfClass:[SBSTrackedCode class]]) {
+        codeDict[@"predictedLocation"] = dictionaryFromQuadrilateral(((SBSTrackedCode *)code).predictedLocation);
+        codeDict[@"deltaTimeForPrediction"] = [NSNumber numberWithDouble:((SBSTrackedCode *)code).deltaTimeForPrediction];
+        codeDict[@"shouldAnimateFromPreviousToNextState"] = [NSNumber numberWithBool:((SBSTrackedCode *)code).shouldAnimateFromPreviousToNextState];
+    }
+
+    return codeDict;
 }
 
 static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
@@ -64,12 +74,20 @@ static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
              };
 }
 
-static inline NSDictionary *dictionaryFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes) {
+static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes) {
     NSMutableArray *newlyTrackedCodes = [NSMutableArray arrayWithCapacity:trackedCodes.count];
     for (NSNumber *identifier in trackedCodes) {
         [newlyTrackedCodes addObject:dictionaryFromCode(trackedCodes[identifier], identifier)];
     }
-    return @{@"newlyTrackedCodes": newlyTrackedCodes};
+    return newlyTrackedCodes;
+}
+
+static inline NSDictionary *dictionaryForMatrixScanSession(NSDictionary<NSNumber *,SBSTrackedCode *> *allTrackedCodes,
+                                                           NSDictionary<NSNumber *,SBSTrackedCode *> *newlyTrackedCodes) {
+    return @{
+             @"allTrackedCodes": dictionaryFromTrackedCodes(allTrackedCodes),
+             @"newlyTrackedCodes": dictionaryFromTrackedCodes(newlyTrackedCodes),
+             };
 }
 
 static inline NSDictionary *dictionaryFromBase64FrameString(NSString *base64FrameString) {
@@ -170,7 +188,8 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 @property (nonatomic) dispatch_semaphore_t didScanSemaphore;
 
 // MatrixScan
-@property (nonatomic) dispatch_semaphore_t didProcessFrameSemaphore;
+@property (nonatomic) dispatch_semaphore_t didFinishOnRecognizeNewCodesSemaphore;
+@property (nonatomic) dispatch_semaphore_t didFinishOnChangedTrackedCodesSemaphore;
 @property (nonatomic) BOOL matrixScanEnabled;
 @property (nonatomic, nullable) NSArray<NSNumber *> *idsToVisuallyReject;
 @property (nonatomic, nullable) NSSet<NSNumber *> *lastFrameRecognizedIds;
@@ -190,7 +209,8 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
         [_picker addWarningsObserver:self];
         [_picker addPropertyObserver:self];
         _didScanSemaphore = dispatch_semaphore_create(0);
-        _didProcessFrameSemaphore = dispatch_semaphore_create(0);
+        _didFinishOnRecognizeNewCodesSemaphore = dispatch_semaphore_create(0);
+        _didFinishOnChangedTrackedCodesSemaphore = dispatch_semaphore_create(0);
         [self addSubview:_picker.view];
     }
     return self;
@@ -239,7 +259,16 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
     self.shouldStop = shouldStop;
     self.shouldPause = shouldPause;
     self.idsToVisuallyReject = idsToVisuallyReject;
-    dispatch_semaphore_signal(self.didProcessFrameSemaphore);
+    dispatch_semaphore_signal(self.didFinishOnRecognizeNewCodesSemaphore);
+}
+
+- (void)finishOnChangeTrackedCodesShouldStop:(BOOL)shouldStop
+                                 shouldPause:(BOOL)shouldPause
+                         idsToVisuallyReject:(NSArray<NSNumber *> *)idsToVisuallyReject {
+    self.shouldStop = shouldStop;
+    self.shouldPause = shouldPause;
+    self.idsToVisuallyReject = idsToVisuallyReject;
+    dispatch_semaphore_signal(self.didFinishOnChangedTrackedCodesSemaphore);
 }
 
 - (void)setMatrixScanEnabled:(BOOL)matrixScanEnabled {
@@ -306,27 +335,38 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
             }
         }
     }
+
     self.lastFrameRecognizedIds = recognizedCodeIds;
 
-    if (newlyTrackedCodes.count > 0) {
-        NSDictionary *newCodes = dictionaryFromTrackedCodes(newlyTrackedCodes);
-        if (self.onRecognizeNewCodes) {
-            self.onRecognizeNewCodes(newCodes);
-        }
+    NSDictionary *matrixScanSessionDictionary = dictionaryForMatrixScanSession(session.trackedCodes, newlyTrackedCodes);
 
+    if (self.matrixScanEnabled && self.onChangeTrackedCodes) {
+        self.onChangeTrackedCodes(matrixScanSessionDictionary);
+        // Suspend the session thread, until finishOnChangedTrackedCodesShouldStop:shouldPause:idsToVisuallyReject: is called from JS
+        dispatch_semaphore_wait(self.didFinishOnChangedTrackedCodesSemaphore, DISPATCH_TIME_FOREVER);
+        [self handleFinishingSemaphore:session];
+    }
+
+
+    if (newlyTrackedCodes.count > 0 && self.onRecognizeNewCodes) {
+        self.onRecognizeNewCodes(matrixScanSessionDictionary);
         // Suspend the session thread, until finishOnRecognizeNewCodesShouldStop:shouldPause:idsToVisuallyReject: is called from JS
-        dispatch_semaphore_wait(self.didProcessFrameSemaphore, DISPATCH_TIME_FOREVER);
-        if (self.shouldStop) {
-            [session stopScanning];
-        } else if (self.shouldPause) {
-            [session pauseScanning];
-        } else {
-            for (NSNumber *identifier in self.idsToVisuallyReject) {
-                SBSTrackedCode *code = session.trackedCodes[identifier];
-                [session rejectTrackedCode:code];
-            }
-            self.idsToVisuallyReject = nil;
+        dispatch_semaphore_wait(self.didFinishOnRecognizeNewCodesSemaphore, DISPATCH_TIME_FOREVER);
+        [self handleFinishingSemaphore:session];
+    }
+}
+
+- (void) handleFinishingSemaphore:(SBSScanSession *)session {
+    if (self.shouldStop) {
+        [session stopScanning];
+    } else if (self.shouldPause) {
+        [session pauseScanning];
+    } else {
+        for (NSNumber *identifier in self.idsToVisuallyReject) {
+            SBSTrackedCode *code = session.trackedCodes[identifier];
+            [session rejectTrackedCode:code];
         }
+        self.idsToVisuallyReject = nil;
     }
 }
 

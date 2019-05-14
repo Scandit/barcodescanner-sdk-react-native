@@ -1,17 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-    requireNativeComponent,
-    findNodeHandle,
-    View,
-    UIManager,
-    processColor
-} from 'react-native';
+import { findNodeHandle, processColor, requireNativeComponent, View } from 'react-native';
+
 import { CommandDispatcher } from './CommandDispatcher';
-import { ScanSession } from './ScanSession';
 import { SerializationHelper } from './SerializationHelper';
-import { Barcode } from './Barcode';
-import { ScanOverlay } from './ScanOverlay';
 
 var iface = {
   name: 'BarcodePicker',
@@ -20,6 +12,7 @@ var iface = {
         shouldPassBarcodeFrame: PropTypes.bool,
         onScan: PropTypes.func,
         onRecognizeNewCodes: PropTypes.func,
+        onChangeTrackedCodes: PropTypes.func,
         onBarcodeFrameAvailable: PropTypes.func,
         onSettingsApplied: PropTypes.func,
         onTextRecognized: PropTypes.func,
@@ -37,6 +30,7 @@ export class BarcodePicker extends React.Component {
         super(props);
         this.onScan = this.onScan.bind(this);
         this.onRecognizeNewCodes = this.onRecognizeNewCodes.bind(this);
+        this.onChangeTrackedCodes = this.onChangeTrackedCodes.bind(this);
         this.onBarcodeFrameAvailable = this.onBarcodeFrameAvailable.bind(this);
         this.onSettingsApplied = this.onSettingsApplied.bind(this);
         this.onTextRecognized = this.onTextRecognized.bind(this);
@@ -64,6 +58,15 @@ export class BarcodePicker extends React.Component {
         var session = SerializationHelper.deserializeMatrixScanSession(event.nativeEvent);
         this.props.onRecognizeNewCodes(session);
         this.dispatcher.finishOnRecognizeNewCodes(SerializationHelper.serializeScanSession(session));
+    }
+
+    onChangeTrackedCodes(event: Event) {
+        if (!this.props.onChangeTrackedCodes) {
+            return;
+        }
+        var session = SerializationHelper.deserializeMatrixScanSession(event.nativeEvent);
+        this.props.onChangeTrackedCodes(session);
+        this.dispatcher.finishOnChangeTrackedCodes(SerializationHelper.serializeScanSession(session));
     }
 
     onBarcodeFrameAvailable(event: Event) {
@@ -107,6 +110,7 @@ export class BarcodePicker extends React.Component {
             {...this.props}
             onScan = {this.onScan}
             onRecognizeNewCodes = {this.onRecognizeNewCodes}
+            onChangeTrackedCodes = {this.onChangeTrackedCodes}
             onBarcodeFrameAvailable = {this.onBarcodeFrameAvailable}
             onSettingsApplied = {this.onSettingsApplied}
             onTextRecognized = {this.onTextRecognized}

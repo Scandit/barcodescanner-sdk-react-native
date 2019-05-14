@@ -20,6 +20,7 @@
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onScan;
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onBarcodeFrameAvailable;
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onRecognizeNewCodes;
+@property (nonatomic, copy, nullable) RCTDirectEventBlock onChangeTrackedCodes;
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onTextRecognized;
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onSettingsApplied;
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onWarnings;
@@ -32,5 +33,9 @@
 - (void)finishOnRecognizeNewCodesShouldStop:(BOOL)shouldStop
                                 shouldPause:(BOOL)shouldPause
                         idsToVisuallyReject:(nullable NSArray<NSNumber *> *)idsToVisuallyReject;
+
+- (void)finishOnChangeTrackedCodesShouldStop:(BOOL)shouldStop
+                                 shouldPause:(BOOL)shouldPause
+                         idsToVisuallyReject:(nullable NSArray<NSNumber *> *)idsToVisuallyReject;
 
 @end

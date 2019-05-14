@@ -1,6 +1,6 @@
-import { ScanSession } from './ScanSession';
-import { MatrixScanSession } from './MatrixScanSession';
 import { BarcodeFrame } from './BarcodeFrame';
+import { MatrixScanSession } from './MatrixScanSession';
+import { ScanSession } from './ScanSession';
 
 export class SerializationHelper {
 
@@ -10,12 +10,14 @@ export class SerializationHelper {
   }
 
   static deserializeScanSession(map) {
-    return new ScanSession(map.allRecognizedCodes, map.newlyRecognizedCodes,
+    return new ScanSession(
+      map.allRecognizedCodes,
+      map.newlyRecognizedCodes,
       map.newlyLocalizedCodes);
   }
 
   static deserializeMatrixScanSession(map) {
-    return new MatrixScanSession(map.newlyTrackedCodes);
+    return new MatrixScanSession(map.newlyTrackedCodes, map.allTrackedCodes);
   }
 
   static deserializeFrame(frame) {

@@ -33,6 +33,7 @@ RCT_EXPORT_VIEW_PROPERTY(scanSettings, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(shouldPassBarcodeFrame, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onScan, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onRecognizeNewCodes, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onChangeTrackedCodes, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBarcodeFrameAvailable, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onTextRecognized, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSettingsApplied, RCTDirectEventBlock)
@@ -347,6 +348,24 @@ RCT_EXPORT_METHOD(finishOnRecognizeNewCodes:(nonnull NSNumber *)reactTag
              [barcodePicker finishOnRecognizeNewCodesShouldStop:shouldStop
                                                     shouldPause:shouldPause
                                             idsToVisuallyReject:idsToVisuallyReject];
+         }
+     }];
+}
+
+RCT_EXPORT_METHOD(finishOnChangeTrackedCodes:(nonnull NSNumber *)reactTag
+                  shouldStop:(BOOL)shouldStop
+                  shouldPause:(BOOL)shouldPause
+                  idsToVisuallyReject:(NSArray<NSNumber *> *)idsToVisuallyReject) {
+    [self.bridge.uiManager addUIBlock:
+     ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+         id view = viewRegistry[reactTag];
+         if (![view isKindOfClass:[SCNBarcodePicker class]]) {
+             RCTLogError(@"Invalid view returned from registry, expecting SCNBarcodePicker, got: %@", view);
+         } else {
+             SCNBarcodePicker *barcodePicker = (SCNBarcodePicker *)view;
+             [barcodePicker finishOnChangeTrackedCodesShouldStop:shouldStop
+                                                     shouldPause:shouldPause
+                                             idsToVisuallyReject:idsToVisuallyReject];
          }
      }];
 }
