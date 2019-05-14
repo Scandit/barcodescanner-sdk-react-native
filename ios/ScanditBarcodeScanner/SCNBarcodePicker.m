@@ -21,6 +21,15 @@ static inline NSDictionary<NSString *, id> *dictionaryFromQuadrilateral(SBSQuadr
              };
 }
 
+static inline SBSQuadrilateral convertQuadrilateral(SBSQuadrilateral rect, SBSBarcodePicker *picker) {
+    SBSQuadrilateral convertedRect;
+    convertedRect.topLeft = [picker convertPointToPickerCoordinates:rect.topLeft];
+    convertedRect.topRight = [picker convertPointToPickerCoordinates:rect.topRight];
+    convertedRect.bottomLeft = [picker convertPointToPickerCoordinates:rect.bottomLeft];
+    convertedRect.bottomRight = [picker convertPointToPickerCoordinates:rect.bottomRight];
+    return convertedRect;
+}
+
 static NSDictionary<NSString *, id> *dictionaryFromCode(SBSCode *code, NSNumber *identifier) {
     NSMutableArray<NSNumber *> *bytesArray = [NSMutableArray arrayWithCapacity:code.rawData.length];
     if (code.rawData != nil) {
@@ -30,26 +39,16 @@ static NSDictionary<NSString *, id> *dictionaryFromCode(SBSCode *code, NSNumber 
         }
     }
 
-    NSMutableDictionary<NSString *, id> * codeDict;
-    codeDict = [[NSMutableDictionary alloc]
-                initWithDictionary:@{
-                                     @"id": identifier ?: @(-1),
-                                     @"rawData": bytesArray,
-                                     @"data": code.data ?: @"",
-                                     @"symbology": code.symbologyName,
-                                     @"compositeFlag": @(code.compositeFlag),
-                                     @"isGs1DataCarrier": [NSNumber numberWithBool:code.isGs1DataCarrier],
-                                     @"isRecognized": [NSNumber numberWithBool:code.isRecognized],
-                                     @"location": dictionaryFromQuadrilateral(code.location),
-                                     }];
-
-    if ([code isKindOfClass:[SBSTrackedCode class]]) {
-        codeDict[@"predictedLocation"] = dictionaryFromQuadrilateral(((SBSTrackedCode *)code).predictedLocation);
-        codeDict[@"deltaTimeForPrediction"] = [NSNumber numberWithDouble:((SBSTrackedCode *)code).deltaTimeForPrediction];
-        codeDict[@"shouldAnimateFromPreviousToNextState"] = [NSNumber numberWithBool:((SBSTrackedCode *)code).shouldAnimateFromPreviousToNextState];
-    }
-
-    return codeDict;
+    return @{
+             @"id": identifier ?: @(-1),
+             @"rawData": bytesArray,
+             @"data": code.data ?: @"",
+             @"symbology": code.symbologyName,
+             @"compositeFlag": @(code.compositeFlag),
+             @"isGs1DataCarrier": [NSNumber numberWithBool:code.isGs1DataCarrier],
+             @"isRecognized": [NSNumber numberWithBool:code.isRecognized],
+             @"location": dictionaryFromQuadrilateral(code.location),
+             };
 }
 
 static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
@@ -74,19 +73,31 @@ static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
              };
 }
 
-static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes) {
+static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes,
+                                                         SBSBarcodePicker *picker) {
     NSMutableArray *newlyTrackedCodes = [NSMutableArray arrayWithCapacity:trackedCodes.count];
     for (NSNumber *identifier in trackedCodes) {
-        [newlyTrackedCodes addObject:dictionaryFromCode(trackedCodes[identifier], identifier)];
+        SBSTrackedCode *trackedCode = trackedCodes[identifier];
+        NSMutableDictionary *codeDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionaryFromCode(trackedCode, identifier)];
+
+        codeDictionary[@"predictedLocation"] = dictionaryFromQuadrilateral(trackedCode.predictedLocation);
+        codeDictionary[@"deltaTimeForPrediction"] = [NSNumber numberWithDouble:(trackedCode.deltaTimeForPrediction)];
+        codeDictionary[@"shouldAnimateFromPreviousToNextState"] = [NSNumber numberWithBool:(trackedCode.shouldAnimateFromPreviousToNextState)];
+
+        SBSQuadrilateral convertedRect = convertQuadrilateral(trackedCode.predictedLocation, picker);
+        codeDictionary[@"convertedPredictedLocation"] = dictionaryFromQuadrilateral(convertedRect);
+
+        [newlyTrackedCodes addObject:codeDictionary];
     }
     return newlyTrackedCodes;
 }
 
 static inline NSDictionary *dictionaryForMatrixScanSession(NSDictionary<NSNumber *,SBSTrackedCode *> *allTrackedCodes,
-                                                           NSDictionary<NSNumber *,SBSTrackedCode *> *newlyTrackedCodes) {
+                                                           NSDictionary<NSNumber *,SBSTrackedCode *> *newlyTrackedCodes,
+                                                           SBSBarcodePicker *picker) {
     return @{
-             @"allTrackedCodes": dictionaryFromTrackedCodes(allTrackedCodes),
-             @"newlyTrackedCodes": dictionaryFromTrackedCodes(newlyTrackedCodes),
+             @"allTrackedCodes": dictionaryFromTrackedCodes(allTrackedCodes, picker),
+             @"newlyTrackedCodes": dictionaryFromTrackedCodes(newlyTrackedCodes, picker),
              };
 }
 
@@ -338,7 +349,9 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 
     self.lastFrameRecognizedIds = recognizedCodeIds;
 
-    NSDictionary *matrixScanSessionDictionary = dictionaryForMatrixScanSession(session.trackedCodes, newlyTrackedCodes);
+    NSDictionary *matrixScanSessionDictionary = dictionaryForMatrixScanSession(session.trackedCodes,
+                                                                               newlyTrackedCodes,
+                                                                               barcodePicker);
 
     if (self.matrixScanEnabled && self.onChangeTrackedCodes) {
         self.onChangeTrackedCodes(matrixScanSessionDictionary);
