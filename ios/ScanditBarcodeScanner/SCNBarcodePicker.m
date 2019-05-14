@@ -202,7 +202,7 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 
 // MatrixScan
 @property (nonatomic) dispatch_semaphore_t didFinishOnRecognizeNewCodesSemaphore;
-@property (nonatomic) dispatch_semaphore_t didFinishOnChangedTrackedCodesSemaphore;
+@property (nonatomic) dispatch_semaphore_t didFinishOnChangeTrackedCodesSemaphore;
 @property (nonatomic) BOOL matrixScanEnabled;
 @property (nonatomic, nullable) NSArray<NSNumber *> *idsToVisuallyReject;
 @property (nonatomic, nullable) NSSet<NSNumber *> *lastFrameRecognizedIds;
@@ -223,7 +223,7 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
         [_picker addPropertyObserver:self];
         _didScanSemaphore = dispatch_semaphore_create(0);
         _didFinishOnRecognizeNewCodesSemaphore = dispatch_semaphore_create(0);
-        _didFinishOnChangedTrackedCodesSemaphore = dispatch_semaphore_create(0);
+        _didFinishOnChangeTrackedCodesSemaphore = dispatch_semaphore_create(0);
         [self addSubview:_picker.view];
     }
     return self;
@@ -281,7 +281,7 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
     self.shouldStop = shouldStop;
     self.shouldPause = shouldPause;
     self.idsToVisuallyReject = idsToVisuallyReject;
-    dispatch_semaphore_signal(self.didFinishOnChangedTrackedCodesSemaphore);
+    dispatch_semaphore_signal(self.didFinishOnChangeTrackedCodesSemaphore);
 }
 
 - (void)setMatrixScanEnabled:(BOOL)matrixScanEnabled {
@@ -360,8 +360,8 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 
     if (self.matrixScanEnabled && self.onChangeTrackedCodes) {
         self.onChangeTrackedCodes(matrixScanSessionDictionary);
-        // Suspend the session thread, until finishOnChangedTrackedCodesShouldStop:shouldPause:idsToVisuallyReject: is called from JS
-        dispatch_semaphore_wait(self.didFinishOnChangedTrackedCodesSemaphore, DISPATCH_TIME_FOREVER);
+        // Suspend the session thread, until finishOnChangeTrackedCodesShouldStop:shouldPause:idsToVisuallyReject: is called from JS
+        dispatch_semaphore_wait(self.didFinishOnChangeTrackedCodesSemaphore, DISPATCH_TIME_FOREVER);
         [self handleFinishingSemaphore:session];
     }
 
