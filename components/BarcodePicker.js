@@ -44,6 +44,9 @@ export class BarcodePicker extends React.Component {
 
     onScan(event: Event) {
         if (!this.props.onScan) {
+            // If the prop was not set, we still need to get back to the native layer notifying it that we finished.
+            // In this case, we don't want to pause, stop or reject any codes.
+            this.dispatcher.finishOnScanCallback([false, false, []]);
             return;
         }
         var session = SerializationHelper.deserializeScanSession(event.nativeEvent);
@@ -53,6 +56,9 @@ export class BarcodePicker extends React.Component {
 
     onRecognizeNewCodes(event: Event) {
         if (!this.props.onRecognizeNewCodes) {
+            // If the prop was not set, we still need to get back to the native layer notifying it that we finished.
+            // In this case, we don't want to pause, stop or reject any codes.
+            this.dispatcher.finishOnRecognizeNewCodes([false, false, []]);
             return;
         }
         var session = SerializationHelper.deserializeMatrixScanSession(event.nativeEvent);
@@ -62,6 +68,9 @@ export class BarcodePicker extends React.Component {
 
     onChangeTrackedCodes(event: Event) {
         if (!this.props.onChangeTrackedCodes) {
+            // If the prop was not set, we still need to get back to the native layer notifying it that we finished.
+            // In this case, we don't want to pause, stop or reject any codes.
+            this.dispatcher.finishOnChangeTrackedCodes([false, false, []]);
             return;
         }
         var session = SerializationHelper.deserializeMatrixScanSession(event.nativeEvent);
