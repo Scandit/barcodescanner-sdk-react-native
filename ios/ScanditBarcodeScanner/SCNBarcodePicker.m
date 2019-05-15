@@ -75,9 +75,9 @@ static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
              };
 }
 
-static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes,
+static inline NSMutableArray *dictionaryArrayFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes,
                                                          ConversionBlock convert) {
-    NSMutableArray *newlyTrackedCodes = [NSMutableArray arrayWithCapacity:trackedCodes.count];
+    NSMutableArray *trackedCodeDictionaries = [NSMutableArray arrayWithCapacity:trackedCodes.count];
     for (NSNumber *identifier in trackedCodes) {
         SBSTrackedCode *trackedCode = trackedCodes[identifier];
         NSMutableDictionary *codeDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionaryFromCode(trackedCode, identifier)];
@@ -89,17 +89,20 @@ static inline NSMutableArray *dictionaryFromTrackedCodes(NSDictionary<NSNumber *
         SBSQuadrilateral convertedPredictedLocation = convert(trackedCode.predictedLocation);
         codeDictionary[@"convertedPredictedLocation"] = dictionaryFromQuadrilateral(convertedPredictedLocation);
 
-        [newlyTrackedCodes addObject:codeDictionary];
+        SBSQuadrilateral convertedLocation = convert(trackedCode.location);
+        codeDictionary[@"convertedLocation"] = dictionaryFromQuadrilateral(convertedLocation);
+
+        [trackedCodeDictionaries addObject:codeDictionary];
     }
-    return newlyTrackedCodes;
+    return trackedCodeDictionaries;
 }
 
 static inline NSDictionary *dictionaryForMatrixScanSession(NSDictionary<NSNumber *,SBSTrackedCode *> *allTrackedCodes,
                                                            NSDictionary<NSNumber *,SBSTrackedCode *> *newlyTrackedCodes,
                                                            ConversionBlock convert) {
     return @{
-             @"allTrackedCodes": dictionaryFromTrackedCodes(allTrackedCodes, convert),
-             @"newlyTrackedCodes": dictionaryFromTrackedCodes(newlyTrackedCodes, convert),
+             @"allTrackedCodes": dictionaryArrayFromTrackedCodes(allTrackedCodes, convert),
+             @"newlyTrackedCodes": dictionaryArrayFromTrackedCodes(newlyTrackedCodes, convert),
              };
 }
 
