@@ -19,6 +19,21 @@ public class Scandit {
   }
 
   /**
+  * @brief A convenience class for quadrilaterals.
+  */
+  public class Quadrilateral {
+
+    /**
+    * @param topLeft The top left corner of the quadrilateral.
+    * @param topRight The top right corner of the quadrilateral.
+    * @param bottomLeft The bottom left corner of the quadrilateral.
+    * @param bottomRight The top right corner of the quadrilateral.
+    */
+    public Quadrilateral(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight);
+
+  }
+
+  /**
   * @brief A convenience class for points with an x and y coordinate.
   */
   public class Point {
@@ -59,11 +74,41 @@ public class Scandit {
     public Symbology symbology;
 
     /**
-    * @brief The composite flag of the barcode
+    * @brief The composite flag of the barcode.
     *
     * For codes that have been localized but not recognized, CompositeFlag.UNKNOWN is returned.
     */
     public CompositeFlag compositeFlag;
+
+    /**
+    * @brief Specifies if the barcode has been recognized or not.
+    */
+    public boolean isRecognized;
+
+    /**
+    * @brief The location of the barcode in the frame. (Only available for tracked codes if MatrixScan is enabled.)
+    */
+    public Quadrilateral location;
+
+    /**
+    * @brief The predicted location of the barcode in the frame. (Only available for tracked codes if MatrixScan is enabled.)
+    */
+    public Quadrilateral predictedLocation;
+
+    /**
+    * @brief The converted predicted location of the barcode in the coordinate system of the picker. (Only available for tracked codes if MatrixScan is enabled.)
+    */
+    public Quadrilateral convertedPredictedLocation;
+
+    /**
+    * @brief If the barcode should animate to the next state, used for visualizing tracked codes. (Only available for tracked codes if MatrixScan is enabled.)
+    */
+    public boolean shouldAnimateFromPreviousToNextState;
+
+    /**
+    * @brief The predicted time until the predicted location, used for visualizing tracked codes. (Only available for tracked codes if MatrixScan is enabled.)
+    */
+    public boolean deltaTimeForPrediction;
 
     // Hack to force doxygen to generate a documentation page for this class.
     public void noop();
@@ -306,6 +351,11 @@ public class Scandit {
     * @brief Prop used to set the matrix scan callback.
     */
     public function onRecognizeNewCodes;
+  
+    /**
+    * @brief Prop used to set the matrix scan callback that's called every frame to get continuous updates about tracked codes.
+    */
+    public function onChangeTrackedCodes;
 
     /**
     *  @brief Prop used to set a callback called after new settings have been applied.
@@ -1166,6 +1216,81 @@ public class Scandit {
     *
     */
     public Barcode[] allRecognizedCodes;
+
+    /**
+    * @brief Immediately Pauses barcode recognition, but keeps camera preview open.
+    *
+    * This is useful for briefly pausing the barcode recognition to show the
+    * recognized code in an overlay and then resume the scan process to scan
+    * more codes.
+    * <p>
+    * When only scanning one code and then returning to another part of the
+    * application, it is recommended to call {@link stopScanning()} instead.
+    * <p>
+    *
+    * @see BarcodePicker.resumeScanning()
+    *
+    *
+    */
+    public void pauseScanning();
+
+    /**
+    * Immediately stops the scanning and clears the scan session
+    * <p>
+    * Calling stop will release the camera, so that other applications can use
+    * it.
+    *
+    * @see BarcodePicker.stopScanning(), pauseScanning()
+    *
+    *
+    */
+    public void stopScanning();
+
+    /**
+    * @brief Prevent beeping/vibrate and highlighting for a particular code.
+    *
+    * Use this method to reject a certain code if you have additional methods for verifying
+    * the integrity of the code, e.g. with a custom checksum. Rejected
+    * codes won't be highlighted in the scan UI. Additionally beep and vibration
+    * will be surpressed.
+    *
+    * For code rejection to work, you must enabled it by setting
+    * {@link ScanSettings.codeRejectionEnabled code rejection} to true.
+    *
+    * Rejected codes will be added to {@link allRecognizedCodes} like all other codes.
+    *
+    * Note that you should only pass codes returned by {@link newlyRecognizedCodes}
+    * as passing any other code will have no effect. Additionally, you should only
+    * calls this method from the scan callback.
+    *
+    * @param code The code to reject
+    *
+    *
+    */
+    public void rejectCode(Barcode code);
+  }
+  public class MatrixScanSession {
+
+    /**
+    * List of barcodes that are newly tracked in the last frame.
+    *
+    *
+    */
+    public Barcode[] newlyTrackedCodes;
+
+    /**
+    * @brief Returns the list of barcodes (data, symbology) that are currently tracked.
+    *
+    * Depending on the code caching and duplicate filtering behaviour, different
+    * sets of codes are returned by this method.
+    *
+    * @see ScanSettings.codeCachingDuration
+    * @see ScanSettings.codeDuplicateFilter
+    *
+    * @return a new copy of the list of barcodes that have been successfully decoded in this session
+    *
+    */
+    public Barcode[] allTrackedCodes;
 
     /**
     * @brief Immediately Pauses barcode recognition, but keeps camera preview open.
