@@ -374,7 +374,7 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
     }
 }
 
-- (void) handleFinishingSemaphore:(SBSScanSession *)session {
+- (void)handleFinishingSemaphore:(SBSScanSession *)session {
     if (self.shouldStop) {
         [session stopScanning];
     } else if (self.shouldPause) {
