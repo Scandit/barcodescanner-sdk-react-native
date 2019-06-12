@@ -47,6 +47,7 @@ class BarcodePicker(
 
     override fun getCommandsMap(): MutableMap<String, Int> = MapBuilder.newHashMap<String, Int>().apply {
         put("startScanning", COMMAND_START_SCANNING)
+        put("startScanningInPausedState", COMMAND_START_SCANNING_IN_PAUSED_STATE)
         put("stopScanning", COMMAND_STOP_SCANNING)
         put("resumeScanning", COMMAND_RESUME_SCANNING)
         put("pauseScanning", COMMAND_PAUSE_SCANNING)
@@ -75,6 +76,10 @@ class BarcodePicker(
             COMMAND_START_SCANNING -> {
                 stopped.set(false)
                 root.startScanning()
+            }
+            COMMAND_START_SCANNING_IN_PAUSED_STATE -> {
+                stopped.set(false)
+                root.startScanning(true)
             }
             COMMAND_STOP_SCANNING -> {
                 stopped.set(true)
