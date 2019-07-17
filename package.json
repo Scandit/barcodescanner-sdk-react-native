@@ -22,8 +22,8 @@
   ],
   "dependencies": {},
   "peerDependencies": {
-    "react": ">16.0.0",
-    "react-native": ">0.47.0",
+    "react": ">=16.6.3",
+    "react-native": ">=0.58.0",
     "prop-types": ">15.5"
   },
   "rnpm": {
