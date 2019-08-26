@@ -28,5 +28,5 @@ First, you have to download the iOS SDK from Scandit's website. Then you need to
 For Android, you have nothing to do. Only working with iOS requires the following steps:
 
 First, you have to download the iOS SDK from Scandit's website. Then you need to copy the `ScanditBarcodeScanner.framework` file to the `project_directory/node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks/` folder.
-You have to link the plugin manually: `react-native link`.
-Go into the your project's `ios` folder and run `pod install`.
+Then, you have to link the plugin manually: `react-native link`.
+After the previous step succeeded, go into the your project's `ios` folder and run `pod install`.
