@@ -22,7 +22,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.HashSet
-import android.util.Log
 
 
 class BarcodePicker(
@@ -32,6 +31,7 @@ class BarcodePicker(
 
     private var picker: BarcodePicker? = null
     private var didScanLatch: CountDownLatch = CountDownLatch(1)
+    private var didRecognizeTextLatch: CountDownLatch = CountDownLatch(1)
     private var didFinishOnRecognizeNewCodesLatch: CountDownLatch = CountDownLatch(1)
     private var didFinishOnChangeTrackedCodesLatch: CountDownLatch = CountDownLatch(1)
     private var lastFrameRecognizedIds = HashSet<Long>()
@@ -40,6 +40,7 @@ class BarcodePicker(
     private var shouldPassBarcodeFrame = false
     private val codesToReject = ArrayList<Int>()
     private val idsToReject = ArrayList<String>()
+    private var isTextRejected = false
 
     private val stopped = AtomicBoolean(false)
 
@@ -69,6 +70,7 @@ class BarcodePicker(
         put("finishOnScanCallback", COMMAND_FINISH_ON_SCAN_CALLBACK)
         put("finishOnRecognizeNewCodes", COMMAND_FINISH_ON_RECOGNIZE_NEW_CODES_CALLBACK)
         put("finishOnChangeTrackedCodes", COMMAND_FINISH_ON_CHANGE_TRACKED_CODES_CALLBACK)
+        put("finishOnTextRecognized", COMMAND_FINISH_ON_TEXT_RECOGNIZED_CALLBACK)
     }
 
     override fun receiveCommand(root: BarcodePicker, commandId: Int, args: ReadableArray?) {
@@ -110,6 +112,7 @@ class BarcodePicker(
             COMMAND_FINISH_ON_SCAN_CALLBACK -> finishOnScan(args)
             COMMAND_FINISH_ON_RECOGNIZE_NEW_CODES_CALLBACK -> finishOnRecognizeNewCodes(args)
             COMMAND_FINISH_ON_CHANGE_TRACKED_CODES_CALLBACK -> finishOnChangeTrackedCodes(args)
+            COMMAND_FINISH_ON_TEXT_RECOGNIZED_CALLBACK -> finishOnTextRecognized(args)
         }
     }
 
@@ -233,13 +236,19 @@ class BarcodePicker(
         handleNextPickerState(scanSession)
     }
 
-    override fun didRecognizeText(text: RecognizedText?): Int {
+    override fun didRecognizeText(text: RecognizedText): Int {
         val event = Arguments.createMap()
         val context = picker?.context as ReactContext?
-        event.putString("text", text?.text)
+        event.putString("text", text.text)
+        event.putBoolean("rejected", text.isRejected())
         context?.getJSModule(RCTEventEmitter::class.java)?.receiveEvent(picker?.id ?: 0,
                 "onTextRecognized", event)
-        return TextRecognitionListener.PICKER_STATE_ACTIVE
+        didRecognizeTextLatch.await()
+        if (isTextRejected) {
+            text.setRejected(true)
+            isTextRejected = false
+        }
+        return getNextPickerState()
     }
 
     override fun onWarnings(warnings: Set<Int>) {
@@ -310,6 +319,16 @@ class BarcodePicker(
         nextPickerState = NextPickerState.CONTINUE
     }
 
+    private fun getNextPickerState(): Int {
+        val requestedState = nextPickerState
+        nextPickerState = NextPickerState.CONTINUE
+        return when (requestedState) {
+            NextPickerState.STOP -> TextRecognitionListener.PICKER_STATE_STOPPED
+            NextPickerState.PAUSE -> TextRecognitionListener.PICKER_STATE_PAUSED
+            else -> TextRecognitionListener.PICKER_STATE_ACTIVE
+        }
+    }
+
     /**
      * Callback method that will be invoked by the JS side once the result of OnScan has been received and processed by JS layer.
      * Arguments in the args array are as follows:
@@ -361,6 +380,24 @@ class BarcodePicker(
         synchronized(didFinishOnChangeTrackedCodesLatch) {
             didFinishOnChangeTrackedCodesLatch.countDown()
             didFinishOnChangeTrackedCodesLatch = CountDownLatch(1)
+        }
+    }
+
+    /**
+     * Callback method that will be invoked by the JS side once the result of OnTextRecognized has been received and processed by JS layer.
+     * Arguments in the args array are as follows:
+     * 1. shouldStop flag
+     * 2. shouldPause flag
+     * 3. rejected text flag
+     */
+    private fun finishOnTextRecognized(args: ReadableArray?) {
+        updateNextPickerState(args)
+
+        isTextRejected = args?.getBoolean(2) ?: false
+
+        synchronized(didRecognizeTextLatch) {
+            didRecognizeTextLatch.countDown()
+            didRecognizeTextLatch = CountDownLatch(1)
         }
     }
 
