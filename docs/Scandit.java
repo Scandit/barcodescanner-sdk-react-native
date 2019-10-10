@@ -382,6 +382,11 @@ public class Scandit {
     public function onBarcodeFrameAvailable;
 
     /**
+     *  @brief Prop used to set the text recognition callback.
+     */
+    public function onTextRecognized;
+
+    /**
      *  @brief Prop used to set the warnings callback.
      *
      *  The onWarnings method will be executed after every time a warning is raised
@@ -772,13 +777,17 @@ public class Scandit {
     public enum RecognitionMode {
 
       /**
-      * Text recognition
+      * Text recognition.
       */
       TEXT,
       /**
-      * Barcode/2d code recognition
+      * Barcode/2d code recognition.
       */
-      CODE
+      CODE,
+      /**
+      * Barcode/2d code recognition and text recognition.
+      */
+      CODE_AND_TEXT
     }
 
     /**
@@ -1008,6 +1017,56 @@ public class Scandit {
     * Implementing a custom MatrixScan UI is not possible.
     */
     public boolean matrixScanEnabled;
+
+    /**
+     * @brief Settings related to to text recognition.
+     */
+    public TextRecognitionSettings textRecognition;
+  }
+
+  /**
+  * @brief Settings related to to text recognition.
+  */
+  public class TextRecognitionSettings {
+
+    /**
+    * @brief The area (in relative coordinates) in which text is to be recognized.
+    *
+    * While it's possible to set this area to the whole image, it is not recommended to do so for
+    * speed reasons. For best performance, set this to the smallest possible area. By default,
+    * the recognition area is set to 1/4 of the image height.
+    *
+    * This value is only used when scanning in portrait orientation.
+    */
+    public Rect areaPortrait;
+
+    /**
+    * @brief The area (in relative coordinates) in which text is to be recognized.
+    *
+    * While it's possible to set this area to the whole image, it is not recommended to do so for
+    * speed reasons. For best performance, set this to the smallest possible area. By default,
+    * the recognition area is set to 1/4 of the image height.
+    *
+    * This value is only used when scanning in landscape orientation.
+    */
+    public Rect areaLandscape;
+
+    /**
+    * @brief Regular expression for filtering the recognized characters. Text that does not match the
+    * regular expression is ignored.
+    *
+    * By default, the regex is set to null. You must explicitly initialize the regex in order for
+    * text recognition to work.
+    */
+    public String regex;
+
+    /**
+    * @brief White list of recognizable characters. If the white list is non-null, a recognition result
+    * will never contain characters that are not contained in it.
+    *
+    * By default the white list is null and all characters will be recognized.
+    */
+    public String characterWhitelist;
   }
 
   /**
@@ -1250,6 +1309,7 @@ public class Scandit {
     */
     public void rejectCode(Barcode code);
   }
+
   public class MatrixScanSession {
 
     /**
@@ -1315,5 +1375,26 @@ public class Scandit {
     * @param code The code to reject
     */
     public void rejectCode(Barcode code);
+  }
+
+  /**
+  * @brief Holds the text recognition result as identified in a frame.
+  */
+  public class RecognizedText {
+
+    /**
+    * @brief The identified text in the frame.
+    */
+    public String text;
+
+    /**
+    * @brief Whether this code is rejected or not.
+    *
+    * If beeping/vibration is enabled, the device will beep and vibrate whenever text has been
+    * recognized. Set this property to true to suppress beeping/vibration. Use this functionality
+    * if you want to perform additional checks on the recognized text that cannot be expressed
+    * through a regular expression.
+    */
+    public boolean rejected;
   }
 }
