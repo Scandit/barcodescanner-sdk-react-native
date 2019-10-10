@@ -1377,6 +1377,9 @@ public class Scandit {
     public void rejectCode(Barcode code);
   }
 
+  /**
+  * @brief Holds the text recognition result as identified in a frame.
+  */
   public class RecognizedText {
 
     /**
