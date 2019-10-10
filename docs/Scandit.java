@@ -1021,11 +1021,11 @@ public class Scandit {
     /**
      * @brief Settings related to to text recognition.
      */
-    public TextRecognitionSettings textRecognitionSettings;
+    public TextRecognitionSettings textRecognition;
   }
 
   /**
-  * @brief Settings related to to text recognition
+  * @brief Settings related to to text recognition.
   */
   public class TextRecognitionSettings {
 
