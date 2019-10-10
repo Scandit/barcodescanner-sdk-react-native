@@ -85,27 +85,31 @@ export default class SimpleSample extends Component {
 
   cameraPermissionGranted() {
     this.scanner.startScanning();
-    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   async componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+    this.checkForCameraPermission();
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = async (nextAppState) => {
+    if (nextAppState.match(/inactive|background/)) {
+      this.scanner.stopScanning();
+    } else {
+      this.checkForCameraPermission();
+    }
+  }
+
+  async checkForCameraPermission() {
     const hasPermission = await this.hasCameraPermission();
     if (hasPermission) {
       this.cameraPermissionGranted();
     } else {
       await this.requestCameraPermission();
-    }
-  }
-  
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-  
-  _handleAppStateChange = (nextAppState) => {
-    if (nextAppState.match(/inactive|background/)) {
-      this.scanner.stopScanning();
-    } else {
-      this.scanner.startScanning();
     }
   }
 
