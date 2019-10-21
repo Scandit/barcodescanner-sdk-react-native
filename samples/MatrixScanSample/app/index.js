@@ -77,27 +77,31 @@ export default class MatrixScanSample extends Component {
   cameraPermissionGranted() {
     this.scanner.setGuiStyle(ScanOverlay.GuiStyle.MATRIX_SCAN);
     this.scanner.startScanning();
-    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   async componentDidMount() {
-    const hasPermission = await this.hasCameraPermission();
-    if (hasPermission) {
-      this.cameraPermissionGranted();
-    } else {
-      await this.requestCameraPermission();
-    }
+    AppState.addEventListener('change', this._handleAppStateChange);
+    this.checkForCameraPermission();
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
   
-  _handleAppStateChange = (nextAppState) => {
+  _handleAppStateChange = async (nextAppState) => {
     if (nextAppState.match(/inactive|background/)) {
       this.scanner.stopScanning();
     } else {
-      this.scanner.startScanning();
+      this.checkForCameraPermission();
+    }
+  }
+
+  async checkForCameraPermission() {
+    const hasPermission = await this.hasCameraPermission();
+    if (hasPermission) {
+      this.cameraPermissionGranted();
+    } else {
+      await this.requestCameraPermission();
     }
   }
 
