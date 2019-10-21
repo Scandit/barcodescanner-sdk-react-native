@@ -21,6 +21,10 @@ Overview         			{#react-native-guides}
 * \subpage react-native-restrict-scanning-area
 * \subpage react-native-active-symbols-counts
 
+#### Advanced use cases
+
+* \subpage react-native-config-ocr
+
 #### Version/edition upgrades
 
 * \subpage react-native-howto-upgrade
