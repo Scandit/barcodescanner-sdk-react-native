@@ -95,9 +95,15 @@ export class BarcodePicker extends React.Component {
 
     onTextRecognized(event: Event) {
         if (!this.props.onTextRecognized) {
+            // If the prop was not set, we still need to get back to the native layer notifying it that we finished.
+            // In this case, we don't want to pause, stop or reject the text.
+            this.dispatcher.finishOnTextRecognized([false, false, false]);
             return;
         }
-        this.props.onTextRecognized(event.nativeEvent.text);
+
+        var recognizedText = SerializationHelper.deserializeRecognizedText(event.nativeEvent);
+        this.props.onTextRecognized(recognizedText);
+        this.dispatcher.finishOnTextRecognized(SerializationHelper.serializeRecognizedText(recognizedText));
     }
 
     onWarnings(event: Event) {

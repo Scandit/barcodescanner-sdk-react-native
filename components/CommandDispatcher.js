@@ -66,6 +66,13 @@ export class CommandDispatcher {
       session);
   }
 
+  finishOnTextRecognized(recognizedText) {
+    UIManager.dispatchViewManagerCommand(
+      this.pickerViewHandle,
+      this.getViewManagerConfig('BarcodePicker').Commands.finishOnTextRecognized,
+      recognizedText);
+  }
+
   setBeepEnabled(isEnabled) {
     UIManager.dispatchViewManagerCommand(
       this.pickerViewHandle,
