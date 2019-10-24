@@ -38,4 +38,8 @@
                                  shouldPause:(BOOL)shouldPause
                          idsToVisuallyReject:(nullable NSArray<NSNumber *> *)idsToVisuallyReject;
 
+- (void)finishOnTextRecognizedShouldStop:(BOOL)shouldStop
+                             shouldPause:(BOOL)shouldPause
+                            shouldReject:(BOOL)shouldReject;
+
 @end

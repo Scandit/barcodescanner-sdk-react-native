@@ -31,6 +31,11 @@ A dedicated OCR License key and SDK should be used. Please contact us (https://s
 api(name: "ScanditOCR", ext: "aar")
 ~~~~~~~~~~~~~~~~
 
+### Add iOS dependency
+
+- Copy ScanditOCR.bundle from the archive downloaded from your Scandit Barcode Scanner SDK account at http://account.scandit.com to the <directory_of_your_project>/ios/ScanditSDK directory.
+- Open Xcode and drag and drop ScanditOCR.bundle inside the Frameworks folder (in the dialog, choose not to copy items).
+
 ## Implementing OCR
 
 To integrate the OCR into your react-native app, follow the simple steps below:
