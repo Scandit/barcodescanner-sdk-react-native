@@ -9,6 +9,7 @@
 #import "SCNBarcodePicker.h"
 #import <React/RCTLog.h>
 #import <UIKit/UIKit.h>
+#import <ScanditBarcodeScanner/SBSTextRecognition.h>
 
 @import ScanditBarcodeScanner;
 
@@ -16,11 +17,11 @@ typedef SBSQuadrilateral (^ConversionBlock)(SBSQuadrilateral);
 
 static inline NSDictionary<NSString *, id> *dictionaryFromQuadrilateral(SBSQuadrilateral quadrilateral) {
     return @{
-             @"topLeft": @[@(quadrilateral.topLeft.x), @(quadrilateral.topLeft.y)],
-             @"topRight": @[@(quadrilateral.topRight.x), @(quadrilateral.topRight.y)],
-             @"bottomLeft": @[@(quadrilateral.bottomLeft.x), @(quadrilateral.bottomLeft.y)],
-             @"bottomRight": @[@(quadrilateral.bottomRight.x), @(quadrilateral.bottomRight.y)],
-             };
+        @"topLeft": @[@(quadrilateral.topLeft.x), @(quadrilateral.topLeft.y)],
+        @"topRight": @[@(quadrilateral.topRight.x), @(quadrilateral.topRight.y)],
+        @"bottomLeft": @[@(quadrilateral.bottomLeft.x), @(quadrilateral.bottomLeft.y)],
+        @"bottomRight": @[@(quadrilateral.bottomRight.x), @(quadrilateral.bottomRight.y)],
+    };
 }
 
 static inline SBSQuadrilateral convertQuadrilateral(SBSQuadrilateral rect, SBSBarcodePicker *picker) {
@@ -42,15 +43,15 @@ static NSDictionary<NSString *, id> *dictionaryFromCode(SBSCode *code, NSNumber 
     }
 
     return @{
-             @"id": identifier ?: @(-1),
-             @"rawData": bytesArray,
-             @"data": code.data ?: @"",
-             @"symbology": code.symbologyName,
-             @"compositeFlag": @(code.compositeFlag),
-             @"isGs1DataCarrier": [NSNumber numberWithBool:code.isGs1DataCarrier],
-             @"isRecognized": [NSNumber numberWithBool:code.isRecognized],
-             @"location": dictionaryFromQuadrilateral(code.location),
-             };
+        @"id": identifier ?: @(-1),
+        @"rawData": bytesArray,
+        @"data": code.data ?: @"",
+        @"symbology": code.symbologyName,
+        @"compositeFlag": @(code.compositeFlag),
+        @"isGs1DataCarrier": [NSNumber numberWithBool:code.isGs1DataCarrier],
+        @"isRecognized": [NSNumber numberWithBool:code.isRecognized],
+        @"location": dictionaryFromQuadrilateral(code.location),
+    };
 }
 
 static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
@@ -69,14 +70,14 @@ static inline NSDictionary *dictionaryFromScanSession(SBSScanSession *session) {
         i++;
     }
     return @{
-             @"allRecognizedCodes": allRecognizedCodes,
-             @"newlyLocalizedCodes": newlyLocalizedCodes,
-             @"newlyRecognizedCodes": newlyRecognizedCodes,
-             };
+        @"allRecognizedCodes": allRecognizedCodes,
+        @"newlyLocalizedCodes": newlyLocalizedCodes,
+        @"newlyRecognizedCodes": newlyRecognizedCodes,
+    };
 }
 
 static inline NSMutableArray *dictionaryArrayFromTrackedCodes(NSDictionary<NSNumber *, SBSTrackedCode *> *trackedCodes,
-                                                         ConversionBlock convert) {
+                                                              ConversionBlock convert) {
     NSMutableArray *trackedCodeDictionaries = [NSMutableArray arrayWithCapacity:trackedCodes.count];
     for (NSNumber *identifier in trackedCodes) {
         SBSTrackedCode *trackedCode = trackedCodes[identifier];
@@ -101,9 +102,9 @@ static inline NSDictionary *dictionaryForMatrixScanSession(NSDictionary<NSNumber
                                                            NSDictionary<NSNumber *,SBSTrackedCode *> *newlyTrackedCodes,
                                                            ConversionBlock convert) {
     return @{
-             @"allTrackedCodes": dictionaryArrayFromTrackedCodes(allTrackedCodes, convert),
-             @"newlyTrackedCodes": dictionaryArrayFromTrackedCodes(newlyTrackedCodes, convert),
-             };
+        @"allTrackedCodes": dictionaryArrayFromTrackedCodes(allTrackedCodes, convert),
+        @"newlyTrackedCodes": dictionaryArrayFromTrackedCodes(newlyTrackedCodes, convert),
+    };
 }
 
 static inline NSDictionary *dictionaryFromBase64FrameString(NSString *base64FrameString) {
@@ -196,7 +197,14 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
     return [@"data:image/png;base64," stringByAppendingString:base64String];
 }
 
-@interface SCNBarcodePicker () <SBSScanDelegate, SBSProcessFrameDelegate, SBSWarningsObserver, SBSPropertyObserver>
+static inline NSDictionary *dictionaryFromText(SBSRecognizedText *text) {
+    return @{
+        @"text": text.text,
+        @"rejected": @(text.rejected)
+    };
+}
+
+@interface SCNBarcodePicker () <SBSScanDelegate, SBSProcessFrameDelegate, SBSWarningsObserver, SBSPropertyObserver, SBSTextRecognitionDelegate>
 
 @property (nonatomic) BOOL shouldStop;
 @property (nonatomic) BOOL shouldPause;
@@ -209,6 +217,10 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
 @property (nonatomic) BOOL matrixScanEnabled;
 @property (nonatomic, nullable) NSArray<NSNumber *> *idsToVisuallyReject;
 @property (nonatomic, nullable) NSSet<NSNumber *> *lastFrameRecognizedIds;
+
+// TextRecognition
+@property (nonatomic) dispatch_semaphore_t didRecognizeTextSemaphore;
+@property (nonatomic) BOOL shouldRejectText;
 
 @end
 
@@ -224,9 +236,14 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
         _picker.processFrameDelegate = self;
         [_picker addWarningsObserver:self];
         [_picker addPropertyObserver:self];
+        if ([_picker respondsToSelector:@selector(setTextRecognitionDelegate:)]) {
+            _picker.textRecognitionDelegate = self;
+        }
         _didScanSemaphore = dispatch_semaphore_create(0);
         _didFinishOnRecognizeNewCodesSemaphore = dispatch_semaphore_create(0);
         _didFinishOnChangeTrackedCodesSemaphore = dispatch_semaphore_create(0);
+        _shouldRejectText = NO;
+        _didRecognizeTextSemaphore = dispatch_semaphore_create(0);
         [self addSubview:_picker.view];
     }
     return self;
@@ -287,6 +304,15 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
     dispatch_semaphore_signal(self.didFinishOnChangeTrackedCodesSemaphore);
 }
 
+- (void)finishOnTextRecognizedShouldStop:(BOOL)shouldStop
+                             shouldPause:(BOOL)shouldPause
+                            shouldReject:(BOOL)shouldReject {
+    self.shouldStop = shouldStop;
+    self.shouldPause = shouldPause;
+    self.shouldRejectText = shouldReject;
+    dispatch_semaphore_signal(self.didFinishOnChangeTrackedCodesSemaphore);
+}
+
 - (void)setMatrixScanEnabled:(BOOL)matrixScanEnabled {
     if (_matrixScanEnabled != matrixScanEnabled) {
         _matrixScanEnabled = matrixScanEnabled;
@@ -318,6 +344,28 @@ static inline NSString *base64StringFromFrame(CMSampleBufferRef *frame) {
             [session rejectCode:code];
         }
         self.codesToReject = nil;
+    }
+}
+
+#pragma mark - SBSTextRecognitionDelegate
+
+- (SBSBarcodePickerState)barcodePicker:(SBSBarcodePicker *)picker
+                      didRecognizeText:(SBSRecognizedText *)text {
+    if (self.onTextRecognized) {
+        self.onTextRecognized(dictionaryFromText(text));
+    }
+    dispatch_semaphore_wait(self.didRecognizeTextSemaphore, DISPATCH_TIME_FOREVER);
+    if (self.shouldRejectText) {
+        text.rejected = YES;
+        self.shouldRejectText = NO;
+    }
+
+    if (self.shouldStop) {
+        return SBSBarcodePickerStateStopped;
+    } else if (self.shouldPause) {
+        return SBSBarcodePickerStatePaused;
+    } else {
+        return SBSBarcodePickerStateActive;
     }
 }
 
