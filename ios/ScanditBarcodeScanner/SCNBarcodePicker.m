@@ -310,7 +310,7 @@ static inline NSDictionary *dictionaryFromText(SBSRecognizedText *text) {
     self.shouldStop = shouldStop;
     self.shouldPause = shouldPause;
     self.shouldRejectText = shouldReject;
-    dispatch_semaphore_signal(self.didFinishOnChangeTrackedCodesSemaphore);
+    dispatch_semaphore_signal(self.didRecognizeTextSemaphore);
 }
 
 - (void)setMatrixScanEnabled:(BOOL)matrixScanEnabled {
