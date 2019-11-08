@@ -53,14 +53,10 @@ Copy it to <directory_of_your_project>/android/libs, then in your main build.gra
 ### Add iOS dependencies
 
 - Download the Barcode Scanner SDK for iOS from your Scandit Barcode Scanner SDK account at http://account.scandit.com, Downloads section.
-- In your existing ReactNative project, create a ScanditSDK folder inside the iOS folder and move ScanditBarcodeScanner.framework from Barcode Scanner for iOS package into new ScanditSDK folder.
+- In your existing ReactNative project, create a Frameworks folder inside the <directory_of_your_project>/node_modules/scandit-react-native/ios/ScanditBarcodeScanner and move the ScanditBarcodeScanner.framework from the Barcode Scanner for iOS package into the new folder.
 - Open the Xcode project and add the required frameworks, see list in http://docs.scandit.com/stable/ios/ios-integrate.html.
-- In Xcode, drag and drop ScanditBarcodeScanner.framework inside the Framework folder (in the dialog, choose **not** to copy items).
-- From the Finder, go to ScanditBarcodeScanner.framework/Resources and drag and drop ScanditBarcodeScanner.bundle inside the Framework folder in Xcode (again choose **not** to copy items).
-- In Xcode, "Linked Frameworks and Libraries" section, delete the greyed out libRCTScanditBarcodeScanner.a and link it again via the plus button.
-
-![framework](img/ios/libs.png)
-
+- In the terminal, go to <directory_of_your_project>/ios and run `pod install`.
+- From the Finder, go to ScanditBarcodeScanner.framework/Resources and drag and drop ScanditBarcodeScanner.bundle inside the Frameworks folder (the one in the main project, not the one inside the Pods project) in Xcode (choose **not** to copy items).
 - In the Info.plist file add a new row where the key is "NSCameraUsageDescription" and the value is the message that will be shown to the user when camera access is requested.
 
 ## Instantiate and configure the barcode picker
