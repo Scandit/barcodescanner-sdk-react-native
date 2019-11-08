@@ -19,14 +19,16 @@ Whenever you update to the newest version you simply need to remove the already 
 
 ## How to use the Scandit Barcode Scanner with React Native newer than 0.60.0
 
-For Android, you have nothing to do. Only working with iOS requires the following steps:
-
-First, you have to download the iOS SDK from Scandit's website. Then you need to copy the `ScanditBarcodeScanner.framework` file to the `project_directory/node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks/` folder.
+For Android, you have nothing to do. On iOS, follow the following steps:
+- Download the iOS SDK from Scandit's website. 
+- Copy the `ScanditBarcodeScanner.framework` file to the `<directory_of_your_project>/node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks/` folder (you probably need to create the `Frameworks` folder).
+- From the Finder, go to `ScanditBarcodeScanner.framework/Resources` and drag and drop `ScanditBarcodeScanner.bundle` inside the Frameworks folder (the one in the main project, not the one inside the Pods project) in Xcode (choose **not** to copy items).
 
 ## How to use the Scandit Barcode Scanner with Expo, starting with version 34
 
-For Android, you have nothing to do. Only working with iOS requires the following steps:
-
-First, you have to download the iOS SDK from Scandit's website. Then you need to copy the `ScanditBarcodeScanner.framework` file to the `project_directory/node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks/` folder.
-Then, you have to link the plugin manually: `react-native link`.
-After the previous step succeeded, go into the project's `ios` folder and run `pod install`.
+For Android, you have nothing to do. On iOS, follow the following steps:
+- Download the iOS SDK from Scandit's website. 
+- Copy the `ScanditBarcodeScanner.framework` file to the `<directory_of_your_project>/node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks/` folder (you probably need to create the `Frameworks` folder).
+- Link the plugin manually: `react-native link`.
+- Go into the project's `ios` folder and run `pod install`.
+- From the Finder, go to `ScanditBarcodeScanner.framework/Resources` and drag and drop `ScanditBarcodeScanner.bundle` inside the Frameworks folder (the one in the main project, not the one inside the Pods project) in Xcode (choose **not** to copy items).
