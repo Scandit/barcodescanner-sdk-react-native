@@ -52,6 +52,8 @@ Copy it to <directory_of_your_project>/android/libs, then in your main build.gra
 
 ### Add iOS dependencies
 
+These instructions assume you have React Native 0.60 or greater. If you have a previous version go to https://docs.scandit.com/5.12/react_native/react-native-integrate.html.
+
 - Download the Barcode Scanner SDK for iOS from your Scandit Barcode Scanner SDK account at http://account.scandit.com, Downloads section.
 - In your existing ReactNative project, create a Frameworks folder inside the <directory_of_your_project>/node_modules/scandit-react-native/ios/ScanditBarcodeScanner and move the ScanditBarcodeScanner.framework from the Barcode Scanner for iOS package into the new folder.
 - Open the Xcode project and add the required frameworks, see list in http://docs.scandit.com/stable/ios/ios-integrate.html.
