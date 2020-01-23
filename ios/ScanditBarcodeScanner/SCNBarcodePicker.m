@@ -277,6 +277,31 @@ static inline NSDictionary *dictionaryFromText(SBSRecognizedText *text) {
     }
 }
 
+- (void)pauseScanning {
+    [self.picker stopScanning];
+    self.shouldPause = YES;
+    [self signalSemaphores];
+}
+
+- (void)stopScanning {
+    [self.picker stopScanning];
+    self.shouldStop = YES;
+    [self signalSemaphores];
+}
+
+- (void)signalSemaphores {
+    // It's possible that we are requested to stop/pause the picker while we are waiting for a
+    // callback from the JS side. When the JS side asks to stop/pause the picker, this callback is
+    // not executed and the signal is not sent to the semaphore. This means that the session queue,
+    // that is waiting for the semaphore, will just wait forever. Here by signaling the semaphores,
+    // we make sure that the session queue is not blocked and it will finish the code it has to
+    // execute.
+    dispatch_semaphore_signal(self.didScanSemaphore);
+    dispatch_semaphore_signal(self.didFinishOnRecognizeNewCodesSemaphore);
+    dispatch_semaphore_signal(self.didFinishOnChangeTrackedCodesSemaphore);
+    dispatch_semaphore_signal(self.didRecognizeTextSemaphore);
+}
+
 - (void)finishOnScanCallbackShouldStop:(BOOL)shouldStop
                            shouldPause:(BOOL)shouldPause
                          codesToReject:(NSArray<NSNumber *> *)codesToReject {

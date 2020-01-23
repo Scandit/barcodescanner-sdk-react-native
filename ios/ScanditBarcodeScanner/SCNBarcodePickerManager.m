@@ -71,7 +71,7 @@ RCT_EXPORT_METHOD(stopScanning:(nonnull NSNumber *)reactTag) {
          if (![view isKindOfClass:[SCNBarcodePicker class]]) {
              RCTLogError(@"Invalid view returned from registry, expecting SCNBarcodePicker, got: %@", view);
          } else {
-             [((SCNBarcodePicker *)view).picker stopScanning];
+             [((SCNBarcodePicker *)view) stopScanning];
          }
      }];
 }
@@ -83,7 +83,7 @@ RCT_EXPORT_METHOD(pauseScanning:(nonnull NSNumber *)reactTag) {
          if (![view isKindOfClass:[SCNBarcodePicker class]]) {
              RCTLogError(@"Invalid view returned from registry, expecting SCNBarcodePicker, got: %@", view);
          } else {
-             [((SCNBarcodePicker *)view).picker pauseScanning];
+             [((SCNBarcodePicker *)view) pauseScanning];
          }
      }];
 }
