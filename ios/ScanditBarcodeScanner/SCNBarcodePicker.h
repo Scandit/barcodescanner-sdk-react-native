@@ -26,6 +26,9 @@
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onWarnings;
 @property (nonatomic, copy, nullable) RCTDirectEventBlock onPropertyChanged;
 
+- (void)pauseScanning;
+- (void)stopScanning;
+
 - (void)finishOnScanCallbackShouldStop:(BOOL)shouldStop
                            shouldPause:(BOOL)shouldPause
                          codesToReject:(nullable NSArray<NSNumber *> *)codesToReject;
