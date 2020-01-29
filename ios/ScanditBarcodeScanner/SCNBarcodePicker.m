@@ -278,7 +278,7 @@ static inline NSDictionary *dictionaryFromText(SBSRecognizedText *text) {
 }
 
 - (void)pauseScanning {
-    [self.picker stopScanning];
+    [self.picker pauseScanning];
     self.shouldPause = YES;
     [self signalSemaphores];
 }
