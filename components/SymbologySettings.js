@@ -17,6 +17,7 @@ SymbologySettings.Checksum = {
     MOD_1110: "mod1110"
 }
 
+// Removed from documentation as they are/can be passed simply as strings.
 SymbologySettings.Extension = {
     FULL_ASCII: "full_ascii",
     REMOVE_LEADING_ZERO: "remove_leading_zero",
