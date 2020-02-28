@@ -61,6 +61,10 @@ These instructions assume you have React Native 0.60 or greater. If you have a p
 - From the Finder, go to ScanditBarcodeScanner.framework/Resources and drag and drop ScanditBarcodeScanner.bundle inside the Frameworks folder (the one in the main project, not the one inside the Pods project) in Xcode (choose **not** to copy items).
 - In the Info.plist file add a new row where the key is "NSCameraUsageDescription" and the value is the message that will be shown to the user when camera access is requested.
 
+Please note that every time that you add a dependency via `npm` or `yarn`, the `node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks` folder will be removed. In order to avoid this:
+- Commit the framework file to your repository other than the `node_modules` folder.
+- Add a `postinstall` script to copy the framework file to the `node_modules/scandit-react-native/ios/ScanditBarcodeScanner/Frameworks` folder. Also, this script can be used to do other things, like installing pods. The reference can be found [here](https://docs.npmjs.com/misc/scripts).
+
 ## Instantiate and configure the barcode picker
 
 The scanning process is managed by the {@link Scandit.BarcodePicker BarcodePicker}. Before instantiating the picker, you will have to set your Scandit Barcode Scanner license key. The key is available from your Scandit Barcode Scanner SDK account at http://account.scandit.com in the License Keys section. The barcode scanning is configured through an instance of scan settings that you pass to the BarcodePicker as props.
