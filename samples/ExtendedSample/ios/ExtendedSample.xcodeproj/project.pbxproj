@@ -36,6 +36,7 @@
 		2DCD954D1E0B4F2C00145EB5 /* ExtendedSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ExtendedSampleTests.m */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6F970E9322427C8F00F2A799 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F970E9222427C8F00F2A799 /* JavaScriptCore.framework */; };
+		6FF3551B241E69E100E918A2 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FF3551A241E69D900E918A2 /* libsqlite3.tbd */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		A2972D4F1FEA80CA0042FBA7 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A2972D4E1FEA80CA0042FBA7 /* libiconv.tbd */; };
 		A2972D511FEA80D00042FBA7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A2972D501FEA80D00042FBA7 /* libz.tbd */; };
@@ -372,6 +373,7 @@
 		2D02E4901E0B4A5D006451C7 /* ExtendedSample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ExtendedSample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		6F970E9222427C8F00F2A799 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		6FF3551A241E69D900E918A2 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7DCE613C349C4A8B8B937D7A /* RNCSlider.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCSlider.xcodeproj; path = "../node_modules/@react-native-community/slider/ios/RNCSlider.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -415,6 +417,7 @@
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
+				6FF3551B241E69E100E918A2 /* libsqlite3.tbd in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
@@ -676,6 +679,7 @@
 		A2972D4D1FEA80CA0042FBA7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6FF3551A241E69D900E918A2 /* libsqlite3.tbd */,
 				6F970E9222427C8F00F2A799 /* JavaScriptCore.framework */,
 				A2972D5D1FEA82DC0042FBA7 /* ScanditBarcodeScanner.bundle */,
 				A2972D5B1FEA82D60042FBA7 /* ScanditBarcodeScanner.framework */,
