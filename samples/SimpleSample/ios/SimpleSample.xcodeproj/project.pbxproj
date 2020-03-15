@@ -23,6 +23,7 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6F921CF4241E69FA000DE8F0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F921CCF241E69F6000DE8F0 /* libsqlite3.tbd */; };
 		6F970DE12242761B00F2A799 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F970DE02242761A00F2A799 /* JavaScriptCore.framework */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		A2FAE9011F9BEC2700C5201F /* libRCTScanditBarcodeScanner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2FAE8D21F9BEBC400C5201F /* libRCTScanditBarcodeScanner.a */; };
@@ -326,6 +327,7 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		3823C203526145FDA2F6F311 /* RCTScanditBarcodeScanner.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTScanditBarcodeScanner.xcodeproj; path = "../node_modules/scandit-react-native/ios/RCTScanditBarcodeScanner.xcodeproj"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		6F921CCF241E69F6000DE8F0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		6F970DE02242761A00F2A799 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 				6F970DE12242761B00F2A799 /* JavaScriptCore.framework in Frameworks */,
 				A2FAE9261F9BED4A00C5201F /* SystemConfiguration.framework in Frameworks */,
 				A2FAE9241F9BED4000C5201F /* CoreMedia.framework in Frameworks */,
+				6F921CF4241E69FA000DE8F0 /* libsqlite3.tbd in Frameworks */,
 				A2FAE9221F9BED3300C5201F /* AVFoundation.framework in Frameworks */,
 				A2FAE9201F9BED2400C5201F /* AudioToolbox.framework in Frameworks */,
 				A2FAE91E1F9BED1400C5201F /* CoreVideo.framework in Frameworks */,
@@ -585,6 +588,7 @@
 		A2FAE8DF1F9BEBF400C5201F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6F921CCF241E69F6000DE8F0 /* libsqlite3.tbd */,
 				6F970DE02242761A00F2A799 /* JavaScriptCore.framework */,
 				A2FAE9291F9BEDE700C5201F /* ScanditBarcodeScanner.bundle */,
 				A2FAE9271F9BEDDF00C5201F /* ScanditBarcodeScanner.framework */,
