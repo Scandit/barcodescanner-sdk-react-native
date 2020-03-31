@@ -367,6 +367,14 @@ export default class SettingsTab extends Component {
                 this.setState(this.state);
               }}
             />
+            <LabeledSwitch
+              label='IATA 2 of 5'
+              value={this.state.scanSettings.symbologies[Barcode.Symbology.IATA_TWO_OF_FIVE].enabled}
+              listener={(value) => {
+                this.state.scanSettings.symbologies[Barcode.Symbology.IATA_TWO_OF_FIVE].enabled = value;
+                this.setState(this.state);
+              }}
+            />
             <Text style={{fontWeight: 'bold',
               margin: 10}}>
               Scanning Area

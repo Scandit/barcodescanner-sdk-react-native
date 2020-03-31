@@ -155,6 +155,7 @@ export default class PickersTab extends Component {
     this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.MICROQR, false);
     this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.CODE32, false);
     this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.LAPA4SC, false);
+    this.scanSpecs.scanSettings.setSymbologyEnabled(Barcode.Symbology.IATA_TWO_OF_FIVE, false);
     this.scanSpecs.scanSettings.symbologies[Barcode.Symbology.QR].colorInvertedEnabled = false;
     this.scanSpecs.scanSettings.symbologies[Barcode.Symbology.DATA_MATRIX].colorInvertedEnabled = false;
     this.scanSpecs.scanSettings.activeScanningAreaCenterY = 0.5;

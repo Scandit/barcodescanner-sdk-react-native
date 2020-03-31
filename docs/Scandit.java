@@ -285,7 +285,12 @@ public class Scandit {
       /**
       * @brief LAPA 4 State Code. Only available in Professional and Enterprise Packages.
       */
-      LAPA4SC
+      LAPA4SC,
+
+      /**
+       * @brief IATA 2 of 5 barcode symbology. Only available in Professional and Enterprise Packages.
+       */
+      IATA_TWO_OF_FIVE
     }
 
     /**

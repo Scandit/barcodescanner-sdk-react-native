@@ -41,5 +41,6 @@ Barcode.Symbology = {
   DOTCODE: "dotcode",
   MICROQR: "microQR",
   CODE32: "code32",
-  LAPA4SC: "lapa4sc"
+  LAPA4SC: "lapa4sc",
+  IATA_TWO_OF_FIVE: "iata2of5"
 }
