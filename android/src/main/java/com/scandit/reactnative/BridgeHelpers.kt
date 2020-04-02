@@ -59,7 +59,7 @@ private fun trackedBarcodesToArray(
 ): WritableArray {
     val array = Arguments.createArray()
 
-    codes.forEach { id, barcode ->
+    codes.forEach { (id, barcode) ->
         val codeMap = barcodeToMap(barcode, id)
         codeMap.putInt("deltaTimeForPrediction", barcode.deltaTimeForPrediction.toInt())
         codeMap.putBoolean("shouldAnimateFromPreviousToNextState", barcode.shouldAnimateFromPreviousToNextState())
