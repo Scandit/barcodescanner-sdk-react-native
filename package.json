@@ -1,6 +1,6 @@
 {
   "name": "scandit-react-native",
-  "version": "5.14.4",
+  "version": "5.14.5",
   "nativePackage": true,
   "description": "Scandit Barcode Scanner SDK for React Native",
   "author": "Scandit <support@scandit.com>",
