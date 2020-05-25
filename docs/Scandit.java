@@ -567,9 +567,24 @@ public class Scandit {
      * \param width Width in dp.
      * \param height Height in dp.
      */
-    public void setCameraSwitchButtonMarginsAndSize(int rightMargin, int topMargin, int width, int height);
+    public void setCameraSwitchMarginsAndSize(int rightMargin, int topMargin, int width, int height);
+    ///@}
+
+    /** @name Text Recognition Switch Configuration
+     *  Sets whether the button to switch between different recognition modes should be visible.
+     */
     ///@{
 
+    /**
+     * Sets whether the button to switch between different recognition modes should be visible. If
+     * the scanner only supports one recognition mode the button is never shown.
+     *
+     * @param isVisible Whether the button should be visible.
+     *
+     * @since 5.7.0
+     */
+    public void setTextRecognitionSwitchVisible(boolean isVisible);
+    ///@}
 
     /** @name Viewfinder Configuration
     *  Customize the viewfinder where the barcode location is highlighted.
