@@ -88,6 +88,11 @@ class BarcodePicker(
                 // Run stopping of the picker on a non-UI thread, to avoid a deadlock.
                 Thread(object : Runnable {
                     override fun run() {
+                        finishOnScan(null)
+                        finishOnRecognizeNewCodes(null)
+                        finishOnChangeTrackedCodes(null)
+                        finishOnTextRecognized(null)
+
                         root.stopScanning()
                     }
                 }).start()
