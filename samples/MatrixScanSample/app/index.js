@@ -13,7 +13,6 @@ import {
 import {
   BarcodePicker,
   ScanditModule,
-  ScanSession,
   Barcode,
   SymbologySettings,
   ScanSettings,
@@ -120,7 +119,7 @@ export default class MatrixScanSample extends Component {
   }
 
   onRecognizeNewCodes(session) {
-    // If you want to visually reject a code you should use ScanSession's rejectCode.
+    // If you want to visually reject a code you should use MatrixScanSession's rejectTrackedCode.
     // For example, the following code will reject all EAN8 codes.
     session.newlyTrackedCodes.forEach(function(barcode) {
       if (barcode.symbology == Barcode.Symbology.EAN8) {
