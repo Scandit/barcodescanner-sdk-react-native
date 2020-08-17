@@ -1322,7 +1322,7 @@ public class Scandit {
     public void pauseScanning();
 
     /**
-    * Immediately stops the scanning and clears the scan session
+    * Immediately stops the scanning and clears the scan session.
     * <p>
     * Calling stop will release the camera, so that other applications can use
     * it.
@@ -1332,25 +1332,14 @@ public class Scandit {
     public void stopScanning();
 
     /**
-    * @brief Prevent beeping/vibrate and highlighting for a particular code.
+    * @brief The codes that should be visualized as rejected in the tracking view.
     *
-    * Use this method to reject a certain code if you have additional methods for verifying
-    * the integrity of the code, e.g. with a custom checksum. Rejected
-    * codes won't be highlighted in the scan UI. Additionally beep and vibration
-    * will be surpressed.
+    * Use this method to visually reject a certain code in the tracking API.
+    * In order to use this feature it is necessary to {@link ScanSettings.matrixScanEnabled} to true.
     *
-    * For code rejection to work, you must enabled it by setting
-    * {@link ScanSettings.codeRejectionEnabled code rejection} to true.
-    *
-    * Rejected codes will be added to {@link allRecognizedCodes} like all other codes.
-    *
-    * Note that you should only pass codes returned by {@link newlyRecognizedCodes}
-    * as passing any other code will have no effect. Additionally, you should only
-    * calls this method from the scan callback.
-    *
-    * @param code The code to reject
+    * @param code The code to reject.
     */
-    public void rejectCode(Barcode code);
+    public void rejectTrackedCode(Barcode code);
   }
 
   /**
