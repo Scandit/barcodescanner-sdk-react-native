@@ -1,23 +1,6 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  AppState,
-  StyleSheet,
-  Text,
-  findNodeHandle,
-  View,
-  Platform,
-  PermissionsAndroid,
-  BackHandler
-} from 'react-native';
-import {
-  BarcodePicker,
-  ScanditModule,
-  ScanSession,
-  Barcode,
-  SymbologySettings,
-  ScanSettings
-} from 'scandit-react-native';
+import { Alert, AppState, BackHandler, PermissionsAndroid, Platform, View } from 'react-native';
+import { Barcode, BarcodePicker, ScanditModule, ScanSettings } from 'scandit-react-native';
 
 ScanditModule.setAppKey('-- ENTER YOUR SCANDIT LICENSE KEY HERE --');
 
@@ -115,9 +98,7 @@ export default class SimpleSample extends Component {
 
   render() {
     return (
-      <View style={{
-        flex: 1,
-        flexDirection: 'column'}}>
+      <View style={{ flex: 1, flexDirection: 'column' }}>
         <BarcodePicker
           onScan={(session) => { this.onScan(session) }}
           scanSettings= { this.settings }
@@ -128,7 +109,13 @@ export default class SimpleSample extends Component {
   }
 
   onScan(session) {
-    alert(session.newlyRecognizedCodes[0].data + " " + session.newlyRecognizedCodes[0].symbology);
+    this.scanner.pauseScanning();
+    Alert.alert(
+      "Scan",
+      session.newlyRecognizedCodes[0].data + " " + session.newlyRecognizedCodes[0].symbology,
+      [{ text: "OK", onPress: () => this.scanner.resumeScanning() }],
+      { cancelable: false }
+    );
   }
 
 }
