@@ -31,7 +31,7 @@ update_versions() {
   rm ${the_file}.bak
 }
 
-package_version=$(cat package.json | python -c 'import sys,json; print json.load(sys.stdin)["version"]')
+package_version=$(cat package.json | python -c 'import sys,json; print(json.load(sys.stdin)["version"])')
 if [[ $package_version != *"SNAPSHOT" ]];
 then
     echo "Tagging with version: ${package_version}"
