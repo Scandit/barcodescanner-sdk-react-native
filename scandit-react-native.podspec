@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
   s.source_files  = "ios/**/*.{h,m}"
   s.vendored_frameworks = 'ios/ScanditBarcodeScanner/Frameworks/ScanditBarcodeScanner.framework'
   s.frameworks = 'CoreText', 'OpenGLES', 'MessageUI', 'CoreVideo', 'UIKit', 'Foundation', 'CoreGraphics', 'AudioToolbox', 'AVFoundation', 'CoreMedia', 'QuartzCore', 'SystemConfiguration', 'MediaPlayer', 'Accelerate'
+  s.weak_frameworks = 'CoreML'
   s.libraries = 'c++', 'iconv', 'z'
 
   s.dependency 'React'
