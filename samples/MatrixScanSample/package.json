@@ -1,6 +1,6 @@
 {
     "name": "MatrixScanSample",
-    "version": "5.19.0SNAPSHOT",
+    "version": "5.19.0BETA1",
     "private": true,
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
